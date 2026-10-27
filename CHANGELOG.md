@@ -1,3 +1,9 @@
+# 2.0.4.1403 — New species saving (pre-release)
+
+- Create missing inherent changes when first saving a new species; avoid an exception while closing its sheet.
+- Preserve explicit zero wound/strain thresholds and tolerate incomplete species effects.
+- Add two regression tests and verify saving/reopening a new species through the live V14 Russian interface.
+
 # 2.0.4.1402 — V14 runtime and Russian layout fixes (pre-release)
 
 - Prepare items synchronously so actor encumbrance is correct on initial load; enrich descriptions when rendering sheets.

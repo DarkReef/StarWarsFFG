@@ -631,6 +631,9 @@ export default class ModifierHelpers {
           const inherentEffectChangeIndex = inherentChanges.findIndex(c => c.key === modPath);
           if (inherentEffectChangeIndex >= 0) {
             inherentChanges[inherentEffectChangeIndex].value = formData.data.attributes[k].value;
+          } else if (modPath) {
+            // New species have an empty inherent effect until their first sheet save.
+            inherentChanges.push({ key: modPath, type: "add", value: formData.data.attributes[k].value });
           }
         }
       }
@@ -761,11 +764,11 @@ export default class ModifierHelpers {
     if (itemEffect && item.type === "species") {
       // update the wound and strain changes to match
       const newChanges = foundry.utils.deepClone(getActiveEffectChanges(itemEffect));
-      const newBrawn = newChanges.find(ae => ae.key === "system.characteristics.Brawn.value").value;
-      const newWillpower = newChanges.find(ae => ae.key === "system.characteristics.Willpower.value").value;
+      const newBrawn = newChanges.find(ae => ae.key === "system.characteristics.Brawn.value")?.value ?? 0;
+      const newWillpower = newChanges.find(ae => ae.key === "system.characteristics.Willpower.value")?.value ?? 0;
       // read the values from the form, if available, otherwise from the object
-      const wounds = formData?.data?.attributes?.Wounds?.value || item.system.attributes.Wounds.value;
-      const strain = formData?.data?.attributes?.Strain?.value || item.system.attributes.Strain.value;
+      const wounds = formData?.data?.attributes?.Wounds?.value ?? item.system.attributes.Wounds?.value ?? 0;
+      const strain = formData?.data?.attributes?.Strain?.value ?? item.system.attributes.Strain?.value ?? 0;
 
       for (const change of newChanges) {
         if (change.key === "system.stats.wounds.max") {
