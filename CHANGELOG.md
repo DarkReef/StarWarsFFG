@@ -1,3 +1,12 @@
+# 2.0.4.1402 — V14 runtime and Russian layout fixes (pre-release)
+
+- Prepare items synchronously so actor encumbrance is correct on initial load; enrich descriptions when rendering sheets.
+- Calculate skill Force dice from the prepared rating after active effects, excluding disabled effects and preserving stored changes.
+- Render weapon roll cards from a snapshot without replacing the live item's typed data model.
+- Preserve Foundry V14 stylesheet layers when switching themes; fix Cyrillic header and resource labels at default sheet sizes.
+- Translate remaining roll-dialog labels and shorten the armor soak heading to fit its column.
+- Validate 28 automated tests, 21 runtime assertions, all 6 actor and 20 item sheet types on Foundry 14.368 with Russian enabled. See README.ru.md for limits.
+
 # 2.0.4.1401 — V14 Russian fork (pre-release)
 
 - Adapt salohcin714 PR #2280 runtime compatibility to upstream 2.0.4 without reverting current data models or gameplay fixes.

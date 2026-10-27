@@ -1154,5 +1154,7 @@
   "SWFFG.UI.UnsupportedTheme": "You are using an unsupported theme. Expected issues, or swap to the Mandar theme.<br>(This message will only show once.)",
   "SWFFG.Obligation": "Obligation",
   "SWFFG.DragDrop.NotEnoughXP": "You do not have enough XP to buy this!",
-  "SWFFG.ItemsMotivations": "Motivations"
+  "SWFFG.ItemsMotivations": "Motivations",
+  "SWFFG.SendToAll": "Send to everyone",
+  "SWFFG.UI.SimulationHint": "Based on {count} simulated rolls. Powered by SWRPG Online."
 }

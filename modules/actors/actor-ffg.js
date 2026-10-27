@@ -1,6 +1,7 @@
 import PopoutEditor from "../popout-editor.js";
 import ModifierHelpers from "../helpers/modifiers.js";
 import { getActiveEffectChanges } from "../compatibility/active-effects.js";
+import { prepareSkillForceChanges } from "../compatibility/skill-force.js";
 
 /**
  * Extend the base Actor entity.
@@ -724,25 +725,7 @@ export class ActorFFG extends foundry.documents.Actor {
 
   /** @override **/
   applyActiveEffects(phase) {
-    if (phase && phase !== "initial") return super.applyActiveEffects(phase);
-
-    // collect force pool modifications since it appears the stat value is without AEs active
-    let maxForceRating = parseInt(this.system?.stats?.forcePool?.max);
-    for (const effect of this.allApplicableEffects()) {
-      for (const change of getActiveEffectChanges(effect)) {
-        if (change.key === "system.stats.forcePool.max") {
-          maxForceRating += parseInt(change.value);
-        }
-      }
-    }
-    // apply the resulting value (minus any committed dice)
-    for (const effect of this.allApplicableEffects()) {
-      for (const change of getActiveEffectChanges(effect)) {
-        if (change.key.includes("system.skills") && change.key.includes(".force")) {
-          change.value = Math.max(maxForceRating - parseInt(this.system?.stats?.forcePool?.value), 0);
-        }
-      }
-    }
+    prepareSkillForceChanges(this, phase);
     return super.applyActiveEffects(phase);
   }
 }

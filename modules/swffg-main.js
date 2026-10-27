@@ -57,6 +57,7 @@ import {ITEM_DATA_MODELS} from "./data/items/index.js";
 import {ACTOR_DATA_MODELS} from "./data/actors/index.js";
 import { activeEffectChangesUpdate, getActiveEffectChanges } from "./compatibility/active-effects.js";
 import { bindChatAction, registerChatMessageRender } from "./helpers/chat-message.js";
+import { applySystemTheme } from "./helpers/theme.js";
 
 /* -------------------------------------------- */
 /*  Foundry VTT Initialization                  */
@@ -267,16 +268,7 @@ Hooks.once("init", async function () {
 
   const uitheme = game.settings.get("starwarsffg", "ui-uitheme");
 
-  switch (uitheme) {
-    case "mandar": {
-      $('link[href*="styles/starwarsffg.css"]').prop("disabled", true);
-      $("head").append('<link href="systems/starwarsffg/styles/mandar.css" rel="stylesheet" type="text/css" media="all">');
-      break;
-    }
-    default: {
-      $('link[href*="styles/starwarsffg.css"]').prop("disabled", false);
-    }
-  }
+  applySystemTheme(uitheme);
 
   /**
    * Register default XP spend notification

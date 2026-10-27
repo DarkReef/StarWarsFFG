@@ -3,7 +3,7 @@
     <div class="dice-pool"></div>
     <div class="simulation" {{#if simDisplay }} {{ else }}style="display: none"{{/if}}>
       {{localize "SWFFG.UI.SuccessChance"}} <span id="success_chance">{{ success }}</span>
-      <i class="fa-regular fa-block-question" title="Based on {{ simCount }} simulated rolls. Powered by SWRPG Online"></i>
+      <i class="fa-regular fa-block-question" title="{{localize 'SWFFG.UI.SimulationHint' count=simCount}}"></i>
     </div>
     <div class="upgrade-buttons">
       <button id="upgrade-ability">{{localize "SWFFG.UpgradeAbility"}}</button>

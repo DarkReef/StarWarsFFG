@@ -78,7 +78,7 @@ export default class RollBuilderFFG extends FormApplication {
       }
     }
 
-    let users = [{ name: "Send To All", id: "all" }];
+    let users = [{ name: game.i18n.localize("SWFFG.SendToAll"), id: "all" }];
     if (game.user.isGM) {
       game.users.contents.forEach((user) => {
         if (user.visible && user.id !== game.user.id) {

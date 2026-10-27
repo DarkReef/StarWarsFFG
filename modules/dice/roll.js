@@ -268,14 +268,14 @@ export class RollFFG extends foundry.dice.Roll {
       if (this.data.flags?.starwarsffg?.uuid) {
         const item = await fromUuid(this.data.flags.starwarsffg.uuid);
         if (item) {
-          this.data = item;
+          this.data = item.toObject(false);
           this.data.system = await item.getItemDetails();
         }
       }
       else if (this.data.flags?.starwarsffg?.ffgUuid) {
         const item = await fromUuid(this.data.flags.starwarsffg.ffgUuid);
         if (item) {
-          this.data = item;
+          this.data = item.toObject(false);
           this.data.system = await item.getItemDetails();
         }
       }

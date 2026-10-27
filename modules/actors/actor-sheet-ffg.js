@@ -243,6 +243,7 @@ export class ActorSheetFFG extends foundry.appv1.sheets.ActorSheet {
 
   /** @override */
   async getData(options) {
+    await Promise.all(this.actor.items.map(item => item.enrichDescription()));
     const data = await super.getData();
     data.classType = this.constructor.name;
 

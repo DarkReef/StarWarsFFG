@@ -262,8 +262,8 @@ export class ItemFFG extends ItemBaseFFG {
   /**
    * Augment the basic Item data model with additional dynamic data.
    */
-  async prepareData() {
-    await super.prepareData();
+  prepareData() {
+    super.prepareData();
 
     // Get the Item's data
     const item = this;
@@ -271,7 +271,7 @@ export class ItemFFG extends ItemBaseFFG {
     const data = item.system;
 
     if (!item.flags.starwarsffg) {
-      await item.updateSource({
+      item.updateSource({
         flags: {
           starwarsffg: {
             isCompendium: !!this.compendium,
@@ -298,8 +298,6 @@ export class ItemFFG extends ItemBaseFFG {
         }
       }
     }
-
-    data.renderedDesc = await PopoutEditor.renderDiceImages(data.description, actor);
 
     // an attachment's Modifications only come back with a total when sources are asked for
     const fromAttachment = (attachment, modifications, key, modtype) =>
@@ -555,6 +553,14 @@ export class ItemFFG extends ItemBaseFFG {
       this._prepareSignatureAbilities();
     }
   }
+  /** Enrich presentation text outside Foundry's synchronous data lifecycle. */
+  async enrichDescription() {
+    const data = this.system;
+    const rendered = await PopoutEditor.renderDiceImages(data.description, this.actor ?? {});
+    if (this.system === data) data.renderedDesc = rendered;
+    return rendered;
+  }
+
   /**
    * Capitalize string
    * @param  {String} s   String value to capitalize

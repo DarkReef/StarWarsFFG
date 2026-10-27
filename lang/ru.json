@@ -103,7 +103,7 @@
   "SWFFG.ItemsSpecial": "Свойства",
   "SWFFG.ItemsEncum": "Нагр.",
   "SWFFG.ItemsDefense": "Защита",
-  "SWFFG.ItemsSoak": "Поглощение",
+  "SWFFG.ItemsSoak": "Поглощ.",
   "SWFFG.ItemsHP": "ЯМ",
   "SWFFG.ItemsPrice": "Цена",
   "SWFFG.ItemsPricePlaceholder": "Стоимость предмета",
@@ -1154,5 +1154,7 @@
   "SWFFG.UI.UnsupportedTheme": "Выбрана неподдерживаемая тема. При проблемах переключитесь на Mandar.<br>Это сообщение показывается один раз.",
   "SWFFG.Obligation": "Обязательство",
   "SWFFG.DragDrop.NotEnoughXP": "Для этой покупки недостаточно опыта!",
-  "SWFFG.ItemsMotivations": "Мотивации"
+  "SWFFG.ItemsMotivations": "Мотивации",
+  "SWFFG.SendToAll": "Отправить всем",
+  "SWFFG.UI.SimulationHint": "По результатам {count} пробных бросков. Расчёт: SWRPG Online."
 }

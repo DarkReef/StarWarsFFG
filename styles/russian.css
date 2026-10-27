@@ -43,3 +43,54 @@ html[data-ffg-language="ru"] .starwarsffg button {
   min-height: 28px;
   line-height: 1.25;
 }
+
+/* Keep Cyrillic labels readable at the default sheet width in both themes. */
+html[data-ffg-language="ru"] .starwarsffg.sheet .characteristic-item .characteristic-label {
+  font-family: "Arial", "Liberation Sans", sans-serif;
+  font-size: 11px;
+  line-height: 16px;
+  padding: 3px 2px;
+  text-transform: none;
+  overflow-wrap: normal;
+}
+
+html[data-ffg-language="ru"] .starwarsffg.sheet.actor .character .header-fields .header-description-block {
+  height: auto;
+  min-height: 170px;
+  overflow: visible;
+}
+
+html[data-ffg-language="ru"] .starwarsffg.sheet .resource.split .attribute {
+  display: flex;
+  flex-direction: column;
+}
+
+html[data-ffg-language="ru"] .starwarsffg.sheet .resource.split .block-background-shadow {
+  position: static;
+  display: flex;
+  height: auto;
+  min-height: 26px;
+  margin-top: -6px;
+  padding: 6px 0 0;
+}
+
+html[data-ffg-language="ru"] .starwarsffg.sheet .resource.split :is(.shadow-left, .shadow-right) {
+  position: static;
+  float: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  min-height: 20px;
+  padding: 2px 3px;
+}
+
+html[data-ffg-language="ru"] .starwarsffg.sheet .resource.split .shadow-text {
+  position: static;
+  transform: none;
+  width: 100%;
+  font: 10px/12px "Arial", "Liberation Sans", sans-serif;
+  text-align: center;
+  text-transform: none;
+  white-space: normal;
+}
