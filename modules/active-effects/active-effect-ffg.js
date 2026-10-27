@@ -1,4 +1,4 @@
-﻿
+
 import ModifierHelpers from "../helpers/modifiers.js";
 
 /**
@@ -6,10 +6,14 @@ import ModifierHelpers from "../helpers/modifiers.js";
  * attachments have an equipped state as well, but no way to set it, so they are left out.
  */
 const equipGatedTypes = ["armour", "weapon"];
+import {
+  activeEffectChangesUpdate,
+  activeEffectCreateData,
+} from "../compatibility/active-effects.js";
 
 function disablePushOnItem(options){
   // don't show push/animation if that's an effect from item
-  if(options.parent.parentCollection === "items")
+  if(options.parent?.parentCollection === "items")
   {
     options.animate = false;
   }
@@ -19,7 +23,45 @@ function disablePushOnItem(options){
  * Extend the basic ActiveEffect
  * @extends {ActiveEffect}
  */
-export class ActiveEffectFFG extends ActiveEffect {
+export class ActiveEffectFFG extends foundry.documents.ActiveEffect {
+  /** Version 14 evaluates changes through this predicate, not instance apply(). */
+  shouldApplyChange(change, options) {
+    if (!this._equipmentAllowsChange(change)) return false;
+    return super.shouldApplyChange(change, options);
+  }
+
+  _equipmentAllowsChange(change) {
+    const item = this.parent;
+    return !equipGatedTypes.includes(item?.type)
+      || !!item.system?.equippable?.equipped
+      || change.key === ModifierHelpers.getModKeyPath("Stat", "Encumbrance");
+  }
+
+  /**
+   * Normalize all system-created effects before Foundry constructs documents.
+   * @override
+   */
+  static async createDocuments(data = [], context = {}) {
+    return super.createDocuments(data.map(effect => activeEffectCreateData(effect)), context);
+  }
+
+  /** @override */
+  async update(data = {}, operation = {}) {
+    if (Array.isArray(data.changes) || Array.isArray(data.system?.changes)) {
+      const changes = data.system?.changes ?? data.changes;
+      const normalized = activeEffectChangesUpdate(changes);
+      data = {...data};
+      delete data.changes;
+      if (data.system?.changes) {
+        data.system = {...data.system};
+        delete data.system.changes;
+        if (!Object.keys(data.system).length) delete data.system;
+      }
+      Object.assign(data, normalized);
+    }
+    return super.update(data, operation);
+  }
+
   /** @override */
   async _onCreate(changed, options, userId) {
     disablePushOnItem(options);
@@ -44,12 +86,7 @@ export class ActiveEffectFFG extends ActiveEffect {
    * @override
    */
   apply(doc, change, ...args) {
-    const item = this.parent;
-    if (
-      equipGatedTypes.includes(item?.type) &&
-      !item.system?.equippable?.equipped &&
-      change.key !== ModifierHelpers.getModKeyPath("Stat", "Encumbrance")
-    ) {
+    if (!this._equipmentAllowsChange(change)) {
       return {};
     }
     return super.apply(doc, change, ...args);

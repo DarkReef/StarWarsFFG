@@ -29,7 +29,7 @@ jobs:
   gate:
     runs-on: ubuntu-latest
     # A draft from a fork would queue an approval on every push to the branch
-    if: github.event_name != 'pull_request_target' || !github.event.pull_request.draft
+    if: github.repository == 'StarWarsFoundryVTT/StarWarsFFG' && (github.event_name != 'pull_request_target' || !github.event.pull_request.draft)
     outputs:
       environment: ${{ steps.decide.outputs.environment }}
       ref: ${{ steps.decide.outputs.ref }}

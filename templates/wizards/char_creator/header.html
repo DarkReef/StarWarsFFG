@@ -2,21 +2,21 @@
   {{#if data.selected.species.name}}
     {{ data.selected.species.name }}
   {{ else }}
-    No Species Selected
+    {{localize "SWFFG.UI.NoSpecies"}}
   {{/if}}
   /
   {{#if data.selected.career.name}}
     {{ data.selected.career.name }}
   {{ else }}
-    No Career Selected
+    {{localize "SWFFG.UI.NoCareer"}}
   {{/if}}
   /
   {{#if data.selected.specialization.name}}
     {{ data.selected.specialization.name }}
   {{ else }}
-    No Specialization Selected
+    {{localize "SWFFG.UI.NoSpecialization"}}
   {{/if}}
   <br>
-  XP: {{ availableXp }} / {{ totalXp }}, Credits: {{ availableCredits }} / {{ totalCredits }},
+  {{localize "SWFFG.DescriptionXP"}}: {{ availableXp }} / {{ totalXp }}, {{localize "SWFFG.DescriptionCredits"}}: {{ availableCredits }} / {{ totalCredits }},
   {{ obligationKey }}: {{ availableObligation }}
 </div>

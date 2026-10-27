@@ -20,8 +20,8 @@
       <div>{{item.tier}}</div>
       {{/if}}
       <div class="item-controls">
-        {{#if item.isDirectlyAdded}}<a class="item-control item-edit" title="Edit Item"><i class="fas fa-edit"></i></a>{{/if}}
-        <a class="item-control item-info" title="Item Information"><i class="fas fa-info-circle"></i></a>
+        {{#if item.isDirectlyAdded}}<a class="item-control item-edit" title="{{localize 'SWFFG.UI.EditItem'}}"><i class="fas fa-edit"></i></a>{{/if}}
+        <a class="item-control item-info" title="{{localize 'SWFFG.UI.ItemInformation'}}"><i class="fas fa-info-circle"></i></a>
       </div>
     </li>
     {{/each}}

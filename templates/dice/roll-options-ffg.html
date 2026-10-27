@@ -2,7 +2,7 @@
   <div class="dice-pool-dialog">
     <div class="dice-pool"></div>
     <div class="simulation" {{#if simDisplay }} {{ else }}style="display: none"{{/if}}>
-      Success chance: <span id="success_chance">{{ success }}</span>
+      {{localize "SWFFG.UI.SuccessChance"}} <span id="success_chance">{{ success }}</span>
       <i class="fa-regular fa-block-question" title="Based on {{ simCount }} simulated rolls. Powered by SWRPG Online"></i>
     </div>
     <div class="upgrade-buttons">
@@ -17,7 +17,7 @@
       <span><em>{{localize "SWFFG.DicePoolAddsHint"}}</em></span>
     </div>
     <details>
-    <summary>Fixed Results</summary>
+    <summary>{{localize "SWFFG.UI.FixedResults"}}</summary>
     <table class="pool-additional-container">
       <tr>
         <td class="pool-additional">{{{ diceSymbols.success }}}</td>
@@ -115,7 +115,7 @@
       {{/if}}
     </table>
     <details>
-    <summary>Options</summary>
+    <summary>{{localize "SWFFG.Options"}}</summary>
     <div class="pool-roll-options">
       {{#if (or (eq isGM true) (eq canUserAddAudio true)) }}
       <div class="flexrow">
@@ -128,7 +128,7 @@
       {{/if}}
       <div class="flexrow">
         <button id="add-flavor" class="extend-button"><i class="far fa-comment-dots"></i></button>
-        <input type="text" class="flavor-text hide" placeholder="Flavor Text" value="{{flavor}}" />
+        <input type="text" class="flavor-text hide" placeholder="{{localize 'SWFFG.UI.FlavorText'}}" value="{{flavor}}" />
       </div>
       {{#if isGM}}
       <div class="flexrow">

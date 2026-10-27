@@ -1,17 +1,46 @@
 {
   "id": "starwarsffg",
-  "title": "Star Wars FFG",
+  "title": "Star Wars FFG — V14 (RU)",
   "description": "A system for playing Star Wars FFG games.",
-  "version": "2.0.4",
+  "version": "2.0.4.1401",
   "compatibility": {
-    "minimum": 13,
-    "verified": 13,
-    "maximum": 13
+    "minimum": "14",
+    "verified": "14.368",
+    "maximum": "14"
   },
-  "authors": [{"name": "Esrin"}, {"name": "CStadther"}, {"name": "Wrycu"}, {"name": "Jaxxa"}],
-  "esmodules": ["modules/dice-pool-ffg.js", "modules/swffg-main.js", "lib/slimselect/slimselect.js", "lib/datatables/datatables.min.js"],
-  "styles": ["styles/starwarsffg.css", "lib/pure/grids-min.css", "lib/slimselect/slimselect.css", "lib/datatables/datatables.min.css"],
-  "scripts": ["lib/jszip/jszip.min.js", "lib/jxon/jxon.min.js", "lib/slimselect/slimselect.js"],
+  "authors": [
+    {
+      "name": "Esrin"
+    },
+    {
+      "name": "CStadther"
+    },
+    {
+      "name": "Wrycu"
+    },
+    {
+      "name": "Jaxxa"
+    }
+  ],
+  "esmodules": [
+    "modules/localization/ru.js",
+    "modules/dice-pool-ffg.js",
+    "modules/swffg-main.js",
+    "lib/slimselect/slimselect.js",
+    "lib/datatables/datatables.min.js"
+  ],
+  "styles": [
+    "styles/starwarsffg.css",
+    "lib/pure/grids-min.css",
+    "lib/slimselect/slimselect.css",
+    "lib/datatables/datatables.min.css",
+    "styles/russian.css"
+  ],
+  "scripts": [
+    "lib/jszip/jszip.min.js",
+    "lib/jxon/jxon.min.js",
+    "lib/slimselect/slimselect.js"
+  ],
   "socket": true,
   "packs": [],
   "packFolders": [],
@@ -82,6 +111,11 @@
       "lang": "ua",
       "name": "Українська мова (Ukrainian)",
       "path": "lang/ua.json"
+    },
+    {
+      "lang": "ru",
+      "name": "Русский",
+      "path": "lang/ru.json"
     }
   ],
   "grid": {
@@ -90,8 +124,8 @@
   },
   "primaryTokenAttribute": "wounds",
   "secondaryTokenAttribute": "strain",
-  "url": "https://github.com/StarWarsFoundryVTT/StarWarsFFG",
-  "manifest": "https://github.com/StarWarsFoundryVTT/StarWarsFFG/releases/latest/download/system.json",
-  "download": "https://github.com/StarWarsFoundryVTT/StarWarsFFG/releases/download/v2.0.4/system.zip",
+  "url": "https://github.com/DarkReef/StarWarsFFG",
+  "manifest": "https://raw.githubusercontent.com/DarkReef/StarWarsFFG/v14-ru/system.json",
+  "download": "https://github.com/DarkReef/StarWarsFFG/releases/download/v2.0.4.1401/system.zip",
   "license": "LICENSE.txt"
 }

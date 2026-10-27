@@ -61,6 +61,7 @@ on:
 
 jobs:
     build:
+        if: github.repository == 'StarWarsFoundryVTT/StarWarsFFG'
         runs-on: ubuntu-latest
         steps:
             - name: Checkout Repository

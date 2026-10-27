@@ -1,0 +1,20 @@
+name: V14 Russian fork validation
+on:
+  push:
+    branches: [v14-ru]
+  pull_request:
+    branches: [v14-ru]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test

@@ -1,8 +1,8 @@
 <p>
-  Update roles for {{ actor.name }}<br>
+  {{localize "SWFFG.UI.UpdateCrew"}} {{ actor.name }}<br>
   <multi-select name="select-many-things">
     <optgroup label="Built In Roles">
-      <option value="Pilot" {{#iff rolesInUse 'contains' 'Pilot' }} selected{{/iff}}>Pilot</option>
+      <option value="Pilot" {{#iff rolesInUse 'contains' 'Pilot' }} selected{{/iff}}>{{localize "SWFFG.UI.Pilot"}}</option>
     </optgroup>
     <optgroup label="User-defined Roles">
       {{# each roles as |role| }}

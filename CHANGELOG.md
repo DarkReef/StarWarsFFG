@@ -1,3 +1,11 @@
+# 2.0.4.1401 — V14 Russian fork (pre-release)
+
+- Adapt salohcin714 PR #2280 runtime compatibility to upstream 2.0.4 without reverting current data models or gameplay fixes.
+- Preserve unequipped armor/weapon effect gating through V14 shouldApplyChange.
+- Avoid cloning prepared Active Effect document graphs in sheet contexts.
+- Add a complete Russian UI dictionary, localize hardcoded UI labels and add Cyrillic layout styles.
+- Add localization and equipment regression checks; see README.ru.md for verification limits.
+
 `2.0.4`
 * Features:
   * Added a compendium browser to search and filter items across all world compendiums! ([#2267](https://github.com/StarWarsFoundryVTT/StarWarsFFG/pull/2267), [@KamiliaBlow](https://github.com/KamiliaBlow))

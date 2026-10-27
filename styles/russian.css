@@ -1,0 +1,45 @@
+/* Scope Cyrillic typography to this system. Dice and icon fonts stay unchanged. */
+html[data-ffg-language="ru"] .starwarsffg {
+  font-family: "Arial", "Liberation Sans", sans-serif;
+}
+
+html[data-ffg-language="ru"] .starwarsffg :is(input, select, textarea, button, h1, h2, h3, h4, .block-title, .characteristic-label, .sheet-tabs, .skill-name) {
+  font-family: "Arial", "Liberation Sans", sans-serif;
+  letter-spacing: normal;
+}
+
+html[data-ffg-language="ru"] .starwarsffg :is(.block-title, .characteristic-label) {
+  height: auto;
+  min-height: 20px;
+  padding: 3px 5px;
+  line-height: 1.15;
+  white-space: normal;
+  overflow-wrap: break-word;
+  text-transform: none;
+}
+
+html[data-ffg-language="ru"] .starwarsffg .sheet-tabs {
+  height: auto;
+  min-height: 32px;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  line-height: 1.25;
+}
+
+html[data-ffg-language="ru"] .starwarsffg .sheet-tabs .item {
+  flex: 0 1 auto;
+  white-space: normal;
+}
+
+html[data-ffg-language="ru"] .starwarsffg :is(.skill-name, .header-name, .form-group > label) {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: break-word;
+}
+
+html[data-ffg-language="ru"] .starwarsffg button {
+  white-space: normal;
+  height: auto;
+  min-height: 28px;
+  line-height: 1.25;
+}

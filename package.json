@@ -7,7 +7,10 @@
     "compile": "gulp css",
     "lint": "npx eslint modules",
     "watch": "gulp",
-    "test:affected": "npx playwright test $(node scripts/affected.mjs)"
+    "test:affected": "npx playwright test $(node scripts/affected.mjs)",
+    "test": "node scripts/check-module-syntax.mjs && node --test tests/compatibility/*.test.mjs tests/localization/*.test.mjs",
+    "test:compat": "node --test tests/compatibility/*.test.mjs",
+    "test:localization": "node --test tests/localization/*.test.mjs"
   },
   "author": "",
   "license": "MIT",
@@ -20,6 +23,7 @@
     "gulp-autoprefixer": "^8.0.0",
     "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^3.0.0",
+    "handlebars": "4.7.8",
     "sass": "^1.49.0"
   },
   "dependencies": {

@@ -1,3 +1,7 @@
+# Foundry V14 / Русский интерфейс
+
+This is the DarkReef V14 fork. See [README.ru.md](README.ru.md) for installation, scope, validation and limitations.
+
 # StarWarsFFG
 
 # StarWarsFFG
