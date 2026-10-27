@@ -37,8 +37,7 @@
         <b>{{ localize "SWFFG.CharacterCreator.review.startingValues" }}</b>
       </span><br>
       {{ totalXp }} {{ localize "SWFFG.CharacterCreator.review.XP" }} {{ totalCredits }} {{ localize "SWFFG.CharacterCreator.review.credits" }}
-      {{ data.grants.bonus.morality }}, {{ data.grants.bonus.duty }}, {{ data.grants.bonus.obligation }}
-      {{ localize "SWFFG.CharacterCreator.review.morality_duty_obligation" }}
+      {{localize obligationLabel}}: {{availableObligation}}
     </div>
     <div class="review-item obligation">
       <span class="obligation status">

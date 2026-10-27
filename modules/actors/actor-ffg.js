@@ -2,6 +2,7 @@ import PopoutEditor from "../popout-editor.js";
 import ModifierHelpers from "../helpers/modifiers.js";
 import { getActiveEffectChanges } from "../compatibility/active-effects.js";
 import { prepareSkillForceChanges } from "../compatibility/skill-force.js";
+import { prepareWeaponCharacteristicDamage } from "../compatibility/weapon-damage.js";
 
 /**
  * Extend the base Actor entity.
@@ -726,6 +727,10 @@ export class ActorFFG extends foundry.documents.Actor {
   /** @override **/
   applyActiveEffects(phase) {
     prepareSkillForceChanges(this, phase);
-    return super.applyActiveEffects(phase);
+    const result = super.applyActiveEffects(phase);
+    if (phase === "final") {
+      for (const item of this.items) prepareWeaponCharacteristicDamage(item, this);
+    }
+    return result;
   }
 }

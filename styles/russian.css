@@ -3,7 +3,7 @@ html[data-ffg-language="ru"] .starwarsffg {
   font-family: "Arial", "Liberation Sans", sans-serif;
 }
 
-html[data-ffg-language="ru"] .starwarsffg :is(input, select, textarea, button, h1, h2, h3, h4, .block-title, .characteristic-label, .sheet-tabs, .skill-name) {
+html[data-ffg-language="ru"] .starwarsffg :is(input, select, textarea, button:not(.icon), h1, h2, h3, h4, .block-title, .characteristic-label, .sheet-tabs, .skill-name) {
   font-family: "Arial", "Liberation Sans", sans-serif;
   letter-spacing: normal;
 }
@@ -37,7 +37,7 @@ html[data-ffg-language="ru"] .starwarsffg :is(.skill-name, .header-name, .form-g
   overflow-wrap: break-word;
 }
 
-html[data-ffg-language="ru"] .starwarsffg button {
+html[data-ffg-language="ru"] .starwarsffg button:not(.icon) {
   white-space: normal;
   height: auto;
   min-height: 28px;
@@ -93,4 +93,31 @@ html[data-ffg-language="ru"] .starwarsffg.sheet .resource.split .shadow-text {
   text-align: center;
   text-transform: none;
   white-space: normal;
+}
+/* Long species and career names must not widen the whole header beyond its sheet. */
+.starwarsffg.sheet.actor .character .header-fields,
+.starwarsffg.sheet.actor .character .header-fields .container {
+  min-width: 0;
+}
+.starwarsffg.sheet.actor .character-details-table { table-layout: fixed; width: 100%; }
+.starwarsffg.sheet.actor .character-details-table td { overflow-wrap: anywhere; }
+.starwarsffg.sheet.actor .character .header-fields :is(.species-pill, .career-pill, .specialization-pill, .signatureability-pill, .forcepower-pill) {
+  white-space: normal;
+  max-width: 100%;
+}
+.starwarsffg.charCreator nav.tabs { flex-wrap: wrap; gap: 4px 12px; }
+.starwarsffg.sheet.actor .character-details-table td:nth-child(odd) { width: 20%; }
+.starwarsffg.sheet.actor .character-details-table td:nth-child(even) { width: 30%; }
+/* V14 uses larger default headings; fit initiative rows in the sidebar. */
+.starwarsffg #combat-tracker .token-name h4 { font: 16px/1.3 Arial, sans-serif; margin: 0; }
+.starwarsffg #combat-tracker .token-initiative .dietype { color: #f3eee6; }
+.starwarsffg.charCreator nav.tabs [data-action="tab"] {
+  flex: 0 1 auto;
+  white-space: normal;
+  text-overflow: clip;
+  height: auto;
+  min-height: 32px;
+  padding: 5px 8px;
+  font-size: 11px;
+  line-height: 1.25;
 }

@@ -6,6 +6,7 @@ import ModifierHelpers from "../helpers/modifiers.js";
 import Helpers from "../helpers/common.js";
 import ItemHelpers from "../helpers/item-helpers.js";
 import { activeEffectChangesUpdate, getActiveEffectChanges } from "../compatibility/active-effects.js";
+import { prepareWeaponCharacteristicDamage } from "../compatibility/weapon-damage.js";
 
 /**
  * Extend the basic Item with some very simple modifications.
@@ -425,7 +426,7 @@ export class ItemFFG extends ItemBaseFFG {
         }
 
         if (this.isEmbedded && this.actor && this.actor.type !== "vehicle" && ModifierHelpers.shouldApplyCharacteristicToDamage(data)) {
-          apply(data.damage, data.characteristic.value, actor.system.characteristics[data.characteristic.value].value);
+          prepareWeaponCharacteristicDamage(this, this.actor);
         }
 
         const rangeLabel = (this.type === "weapon" ? `SWFFG.WeaponRange` : `SWFFG.VehicleRange`) + this._capitalize(data.range.adjusted);

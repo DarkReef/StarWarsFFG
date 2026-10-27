@@ -1,5 +1,6 @@
 import {DicePoolFFG, RollFFG} from "./dice-pool-ffg.js";
 import PopoutEditor from "./popout-editor.js";
+import { combatEffectIcons } from "./compatibility/combat-effects.js";
 import { configuredMessageMode, messageModeOptions, normalizeMessageMode } from "./compatibility/chat.js";
 
 /**
@@ -192,7 +193,7 @@ export class CombatFFG extends foundry.documents.Combat {
 
       const defaultInitiativeFormula = formula || initiative._getInitiativeFormula();
       if (Array.isArray(ids) && ids.length > 1) {
-        whosInitiative = "Multiple Combatants";
+        whosInitiative = game.i18n.localize("SWFFG.Combats.MultipleCombatants");
       } else {
         // Make sure we are dealing with an array of ids
         ids = typeof ids === "string" ? [ids] : ids;
@@ -853,24 +854,7 @@ export class CombatFFG extends foundry.documents.Combat {
         const hidden = this._getTokenHidden(claimant.tokenId);
         let defeated = claimant.isDefeated;
 
-        const effects = new Set();
-        if (claimant.token) {
-          claimant.token.effects.forEach((e) => effects.add(e))
-          if (claimant.token.overlayEffect) {
-            effects.add(claimant.token.overlayEffect);
-          }
-        }
-
-        if (claimant.actor) {
-          if (claimant.isDefeated) {
-            defeated = true;
-          }
-          for (const effect of claimant.actor.temporaryEffects) {
-            if (effect?.icon) {
-              effects.add(effect.icon);
-            }
-          }
-        }
+        const effects = combatEffectIcons(claimant.actor, CONST.ACTIVE_EFFECT_SHOW_ICON, CONFIG.specialStatusEffects.DEFEATED);
 
         if (!hidden && turn.css) {
           turn.css = turn?.css?.replace('hidden', '');
@@ -984,6 +968,7 @@ export class CombatFFG extends foundry.documents.Combat {
         ...turn,
         ...claim,
         slotType: slotType,
+        slotLabel: game.i18n.localize(`SWFFG.Combats.Slot.${slotType}`),
         initiative: slotInitiative,
         hasRolled: hasRolled,
         claimed,
@@ -1123,9 +1108,13 @@ export class CombatTrackerFFG extends foundry.applications.sidebar.tabs.CombatTr
       return;
     }
     const token = ownedTokenCount === 1 ? canvas.tokens.ownedTokens[0] : canvas.tokens.controlled[0];
-    const combatant = this.viewed.combatants.find(i => i.actorId === token.actor.id);
+    const combatant = this.viewed.combatants.find(i => i.tokenId === token.document.id);
     if (!combatant) {
       ui.notifications.warn(game.i18n.localize("SWFFG.Notifications.Combat.Claim.Combatant"));
+      return;
+    }
+    if (this.viewed.hasClaims(combatant.id)) {
+      ui.notifications.warn(game.i18n.localize("SWFFG.Notifications.Combat.Claim.AlreadyActed"));
       return;
     }
     // ensure combatant is permitted in this type of slot

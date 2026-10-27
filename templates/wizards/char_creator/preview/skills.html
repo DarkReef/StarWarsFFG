@@ -109,11 +109,7 @@
                 <i class="far fa-plus-square" data-action="skill-control" data-direction="increase" data-target="{{ skill.name }}" data-value="{{ skill.rank }}" data-mode="{{ ../../mode }}"></i>
               {{/if}}
 
-              {{#with (lookup ../../actor.system.characteristics [characteristic])~}}
-                <div class="skill-characteristic">
-                  ({{localize abrev}})
-                </div>
-              {{/with}}
+              <div class="skill-characteristic">({{skill.characteristicAbbreviation}})</div>
             </div>
           </div>
           <div class="pure-u-3-24 hover">

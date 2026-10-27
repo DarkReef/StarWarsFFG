@@ -39,7 +39,7 @@
           </td>
           <td>
             {{#each career.system.careerSkills as |careerSkill key|}}
-              {{ careerSkill }}
+              {{#with (lookup ../../FFGCONFIG.skills careerSkill)}}{{localize label}}{{else}}{{careerSkill}}{{/with}}
               {{#if @last }}{{ else }},{{/if }}
             {{/each }}
           </td>
@@ -94,7 +94,7 @@
           </td>
           <td>
             {{#each specialization.system.careerSkills as |careerSkill key|}}
-              {{ careerSkill }}
+              {{#with (lookup ../../FFGCONFIG.skills careerSkill)}}{{localize label}}{{else}}{{careerSkill}}{{/with}}
               {{#if @last }}{{ else }},{{/if }}
             {{/each }}
           </td>

@@ -68,8 +68,8 @@
           <td>{{ item.system.rarity.value }}<!--TODO: include restricted flag?--></td>
           <td>{{ item.system.encumbrance.value }}</td>
           <td>{{ item.system.hardpoints.value }}</td>
-          <td>{{ item.system.skill.value }}</td>
-          <td>{{ item.system.range.value }}</td>
+          <td>{{#with (lookup ../FFGCONFIG.skills item.system.skill.value)}}{{localize label}}{{else}}{{item.system.skill.value}}{{/with}}</td>
+          <td>{{localize item.system.range.label}}</td>
           <td>
             {{#each item.system.itemmodifier as |quality| }}
               <div class="item-pill hover-tooltip" data-tooltip="{{ quality.system.description }}">{{ quality.name }}</div>

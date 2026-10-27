@@ -226,7 +226,7 @@ async function notifyXpSpend(actor, action) {
       speaker: {
         actor: actor,
       },
-      content: `bought ${action}`,
+      content: game.i18n.format("SWFFG.XP.Purchased", {action}),
       whisper: ChatMessage.getWhisperRecipients("GM"),
     };
     await ChatMessage.create(chatData);

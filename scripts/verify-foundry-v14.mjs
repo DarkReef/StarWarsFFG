@@ -7,6 +7,16 @@ export async function verifyFoundryV14() {
   const checks = [];
   const check = (name, pass, actual) => checks.push({ name, pass: Boolean(pass), actual });
   const ActorClass = CONFIG.Actor.documentClass;
+  const meleeActor = new ActorClass({name: "QA transient melee", type: "character",
+    system: {characteristics: {Brawn: {value: 1}}}, effects: [{name: "Species Brawn",
+      system: {changes: [{key: "system.characteristics.Brawn.value", type: "add", value: 2}]}}],
+    items: [{name: "QA blade", type: "weapon", system: {damage: {value: 2}, characteristic: {value: "Brawn"}}}]});
+  for (const reset of [false, true]) {
+    if (reset) meleeActor.reset();
+    check(`Melee damage after actor effects, reset=${reset}`, meleeActor.items.contents[0].system.damage.adjusted === 5
+      && meleeActor.items.contents[0]._source.system.damage.value === 2,
+      {brawn: meleeActor.system.characteristics.Brawn.value, damage: meleeActor.items.contents[0].system.damage.adjusted});
+  }
   for (const equipped of [false, true]) {
     const actor = new ActorClass({ name: "QA transient armor", type: "character",
       system: { characteristics: { Brawn: { value: 3 } }, stats: { soak: { value: 3 } } },
@@ -52,6 +62,14 @@ export async function verifyFoundryV14() {
     await actor.update({ "system.stats.wounds.value": 4 });
     actor.reset();
     check("Actor update survives data reset", actor.system.stats.wounds.value === 4);
+    const {useMedicalItem} = await import("../modules/helpers/medical.js");
+    const [stim] = await actor.createEmbeddedDocuments("Item", [{name: "QA stim", type: "gear",
+      flags: {starwarsffg: {config: {medicalType: 1}}}, system: {quantity: {value: 2}}}]);
+    await actor.update({"system.stats.wounds.value": 12});
+    await Promise.all([useMedicalItem(actor, stim.id, true), useMedicalItem(actor, stim.id, true)]);
+    check("Concurrent healing persists both treatments", actor.system.stats.wounds.value === 3
+      && actor.system.stats.medical.uses === 2 && stim.system.quantity.value === 0,
+      {wounds: actor.system.stats.wounds.value, uses: actor.system.stats.medical.uses, quantity: stim.system.quantity.value});
     const [effect] = await actor.createEmbeddedDocuments("ActiveEffect", [{ name: "QA agility",
       system: { changes: [{ key: "system.characteristics.Agility.value", type: "add", value: 2 }] } }]);
     check("V14 embedded effect applies", actor.system.characteristics.Agility.value === 2);

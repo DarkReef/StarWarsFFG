@@ -52,43 +52,43 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         // https://foundryvtt.wiki/en/development/guides/Tabs-and-Templates/Tabs-in-AppV2
         {
           id: "rules",
-          label: "rules"
+          label: "SWFFG.CharacterCreator.Tab.rules"
         },
         {
           id: "background",
-          label: "background"
+          label: "SWFFG.CharacterCreator.Tab.background"
         },
         {
           id: "startingBonus",
-          label: "startingBonus"
+          label: "SWFFG.CharacterCreator.Tab.startingBonus"
         },
         {
           id: "obligation",
-          label: "obligation"
+          label: "SWFFG.CharacterCreator.Tab.obligation"
         },
         {
           id: "species",
-          label: "species"
+          label: "SWFFG.CharacterCreator.Tab.species"
         },
         {
           id: "career",
-          label: "career"
+          label: "SWFFG.CharacterCreator.Tab.career"
         },
         {
           id: "xp_spend",
-          label: "xp_spend"
+          label: "SWFFG.CharacterCreator.Tab.xp_spend"
         },
         {
           id: "gear",
-          label: "gear"
+          label: "SWFFG.CharacterCreator.Tab.gear"
         },
         {
           id: "motivation",
-          label: "motivation"
+          label: "SWFFG.CharacterCreator.Tab.motivation"
         },
         {
           id: "review",
-          label: "review"
+          label: "SWFFG.CharacterCreator.Tab.review"
         },
       ],
       //labelPrefix: "MYSYS.tab", // Optional. Prepended to the id to generate a localization key
@@ -98,6 +98,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
 
   static DEFAULT_OPTIONS = {
     tag: "form",
+    window: {title: "SWFFG.CharacterCreator.Title"},
     form: {
       handler: CharacterCreator.myFormHandler,
       submitOnChange: false,
@@ -186,13 +187,21 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       return this.close();
     }
     // configure socket events
-    game.socket.on("system.starwarsffg", async (...args) => {
+    this._socketListener = async (...args) => {
       if (args[0]?.eventType === "pcWizard" && args[0]?.event === "createCharacterResponse") {
         await this.showCharacterStatus(args[0].actorId);
       } else if (args[0]?.eventType === "pcWizard" && args[0]?.event === "createFinalActorResponse") {
         await this.createActor(args[0].actorId);
       }
-    });
+    };
+    game.socket.on("system.starwarsffg", this._socketListener);
+  }
+
+  async close(options) {
+    if (this._socketListener) game.socket.off("system.starwarsffg", this._socketListener);
+    for (const selector of this._slimSelects ?? []) selector.destroy();
+    this._slimSelects = [];
+    return super.close(options);
   }
 
   /** @override */
@@ -200,11 +209,16 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     /**
      * Used to activateListeners on ApplicationV2
      */
+    for (const selector of this._slimSelects ?? []) selector.destroy();
+    this._slimSelects = [];
     await super._onRender(context, options);
     CONFIG.logger.debug("Rendering Character Creator");
 
+    const selectSettings = {placeholderText: game.i18n.localize("SWFFG.UI.SelectValue"), searchPlaceholder: game.i18n.localize("SWFFG.Tables.search"), searchText: game.i18n.localize("SWFFG.Tables.zeroRecords")};
+
     // backgrounds
     const cultureSelector = new SlimSelect({
+      settings: {...selectSettings},
       select: '#culture',
       events: {
         afterChange: async (newVal) => {
@@ -213,8 +227,10 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         }
       }
     });
+    this._slimSelects.push(cultureSelector);
     cultureSelector.setSelected(this.data.selected.background.culture?.uuid, false);
     const hookSelector = new SlimSelect({
+      settings: {...selectSettings},
       select: '#hook',
       events: {
         afterChange: async (newVal) => {
@@ -223,9 +239,11 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         }
       }
     });
+    this._slimSelects.push(hookSelector);
     hookSelector.setSelected(this.data.selected.background.hook?.uuid, false);
     if (this.data.selected.rules === "fad") {
       const forceAttitudeSelector = new SlimSelect({
+      settings: {...selectSettings},
         select: '#force_attitude',
         events: {
           afterChange: async (newVal) => {
@@ -234,11 +252,13 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
           }
         }
       });
+      this._slimSelects.push(forceAttitudeSelector);
       forceAttitudeSelector.setSelected(this.data.selected.background.forceAttitude?.uuid, false);
     }
 
     // starting bonuses
     const startingBonusSelector = new SlimSelect({
+      settings: {...selectSettings},
         select: '#startingBonus',
         events: {
           afterChange: async (newVal) => {
@@ -247,11 +267,16 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
           }
         }
       });
-      startingBonusSelector.setSelected(this.data.selected.startingBonus, false);
+    this._slimSelects.push(startingBonusSelector);
+    startingBonusSelector.setSelected(this.data.selected.startingBonus, false);
+
+    const tableLanguage = Object.fromEntries(['emptyTable', 'info', 'infoEmpty', 'infoFiltered', 'lengthMenu', 'search', 'zeroRecords']
+      .map(key => [key, game.i18n.localize(`SWFFG.Tables.${key}`)]));
 
     // obligations
     const obligationsTable = new DataTable(
       "#obligations",
+      {language: tableLanguage},
     );
     obligationsTable.on("draw", () => {
       $(".obligation-spend").off("click").on("click", async (event) => {
@@ -268,6 +293,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     // species
     const speciesTable = new DataTable(
       "#species",
+      {language: tableLanguage},
     );
     speciesTable.on("draw", () => {
       $(".species-spend").off("click").on("click", async (event) => {
@@ -281,6 +307,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     // careers
     const careersTable = new DataTable(
       "#careers",
+      {language: tableLanguage},
     );
     careersTable.on("draw", () => {
       $(".career-spend").off("click").on("click", async (event) => {
@@ -304,6 +331,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     // specializations
     const specializationsTable = new DataTable(
       "#specializations",
+      {language: tableLanguage},
     );
     $(".specialization-spend").on("click", async (event) => {
       await this.handleSpecializationSelect(event);
@@ -357,6 +385,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     const gearTable = new DataTable(
       "#buy_gear",
       {
+        language: tableLanguage,
         columnDefs: [{
           visible: false,
           targets: 0,
@@ -365,7 +394,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
           topStart: {
             buttons: [
               {
-                text: 'Weapons',
+                text: game.i18n.localize("SWFFG.ItemsWeapons"),
                 action: async (e, dt, node, config) => {
                   dt.column(3).visible(true);
                   dt.column(4).visible(true);
@@ -385,7 +414,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
                 className: 'weapon',
               },
               {
-                text: 'Armor',
+                text: game.i18n.localize("SWFFG.ItemsArmor"),
                 action: async (e, dt, node, config) => {
                   dt.column(3).visible(true);
                   dt.column(4).visible(false);
@@ -405,7 +434,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
                 className: 'armor',
               },
               {
-                text: 'Gear',
+                text: game.i18n.localize("SWFFG.ItemsGear"),
                 action: async (e, dt, node, config) => {
                   dt.column(3).visible(true);
                   dt.column(4).visible(false);
@@ -425,7 +454,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
                 className: 'gear',
               },
               {
-                text: 'Attachment',
+                text: game.i18n.localize("SWFFG.ItemAttachments"),
                 action: async (e, dt, node, config) => {
                   dt.column(3).visible(true);
                   dt.column(4).visible(false);
@@ -445,7 +474,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
                 className: 'attachment',
               },
               {
-                text: 'Mod',
+                text: game.i18n.localize("SWFFG.CompendiumBrowser.Tabs.Mods"),
                 action: async (e, dt, node, config) => {
                   dt.column(3).visible(false);
                   dt.column(4).visible(false);
@@ -477,9 +506,11 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     // motivations
     const purchasedMotivationTable = new DataTable(
       "#selected_motivations",
+      {language: tableLanguage},
     );
     const availableMotivationTable = new DataTable(
       "#motivations",
+      {language: tableLanguage},
     );
     availableMotivationTable.on("draw", async () => {
       $(".motivation-spend").off("click").on("click", async (event) => {
@@ -550,6 +581,9 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         this.tempActor.system
       );
       context.skillsList = this.tempActor.sheet._createSkillColumns({data: skillData});
+      for (const column of context.skillsList) for (const skill of column) {
+        if (skill.characteristic) skill.characteristicAbbreviation = game.i18n.localize(`SWFFG.Characteristic${skill.characteristic}Abbreviation`);
+      }
 
     }
     // the force power preview displays the description, which has to be enriched first
@@ -573,6 +607,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     context.startingObligation = obligation.starting;
     context.availableObligation = obligation.available;
     context.obligationKey = obligation.key;
+    context.obligationLabel = `SWFFG.CharacterCreator.Obligation.${obligation.key}`;
 
     // include career / specialization career ranks
     let combinedPurchases = {};
@@ -803,7 +838,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       }
     }
 
-    for (const item of game.items.filter(i => i.type === "careers")) {
+    for (const item of game.items.filter(i => i.type === "career")) {
       item.pill = await foundry.applications.ux.TextEditor.enrichHTML(item?.link);
       careers.push(item);
     }
@@ -855,7 +890,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   static selectRules(event, target) {
     const choice = $(target).find(":checked")[0].value;
     this.data.selected.rules = choice;
-    this.render(true);
+    this.selectStartingBonus(null);
   }
 
   /**
@@ -864,7 +899,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
   selectStartingBonus(choice) {
     CONFIG.logger.debug(`selected starting bonus ${choice}`);
     const ruleToBonusMap = {
-      fad: 'conflict',
+      fad: 'morality',
       aor: 'duty',
       eote: 'obligation',
     };
@@ -872,6 +907,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     this.data.grants.bonus.duty = 0;
     this.data.grants.bonus.obligation = 0;
     this.data.grants.bonus.conflict = 0;
+    this.data.grants.bonus.morality = 0;
     this.data.grants.bonus.credits = 0;
 
     if (this.data.selected.rules === 'fad') {
@@ -890,16 +926,16 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
     } else {
       if (choice === '5xp') {
         this.data.grants.bonus.xp = 5;
-        this.data.grants.bonus[ruleToBonusMap[this.data.grants.rules]] = 5;
+        this.data.grants.bonus[ruleToBonusMap[this.data.selected.rules]] = 5;
       } else if (choice === '10xp') {
         this.data.grants.bonus.xp = 10;
-        this.data.grants.bonus[ruleToBonusMap[this.data.grants.rules]] = 10;
+        this.data.grants.bonus[ruleToBonusMap[this.data.selected.rules]] = 10;
       } else if (choice === '1k_credits') {
         this.data.grants.bonus.credits = 1000;
-        this.data.grants.bonus[ruleToBonusMap[this.data.grants.rules]] = 5;
+        this.data.grants.bonus[ruleToBonusMap[this.data.selected.rules]] = 5;
       } else if (choice === '2k_credits') {
         this.data.grants.bonus.credits = 2500;
-        this.data.grants.bonus[ruleToBonusMap[this.data.grants.rules]] = 10;
+        this.data.grants.bonus[ruleToBonusMap[this.data.selected.rules]] = 10;
       }
     }
     this.data.selected.startingBonus = choice;
@@ -1260,6 +1296,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       const purchaseIndex = this.data.purchases.xp.characteristics.findIndex(function(purchase) {
         return purchase.key === characteristic && purchase.value === curValue;
       });
+      if (purchaseIndex < 0) return;
       this.data.purchases.xp.characteristics.splice(purchaseIndex, 1);
     }
     // rebuild the actor to apply the changes
@@ -1280,6 +1317,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         const purchaseIndex = this.data.selected.careerCareerSkillRanks.findIndex(function (purchase) {
           return purchase === skill;
         });
+        if (purchaseIndex < 0) return;
         this.data.selected.careerCareerSkillRanks.splice(purchaseIndex, 1);
       }
     } else if (skillMode === "specialization") {
@@ -1289,6 +1327,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         const purchaseIndex = this.data.selected.specializationCareerSkillRanks.findIndex(function (purchase) {
           return purchase === skill;
         });
+        if (purchaseIndex < 0) return;
         this.data.selected.specializationCareerSkillRanks.splice(purchaseIndex, 1);
       }
     } else {
@@ -1309,6 +1348,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         const purchaseIndex = this.data.purchases.xp.skills.findIndex(function (purchase) {
           return purchase.key === skill && purchase.value === curValue;
         });
+        if (purchaseIndex < 0) return;
         this.data.purchases.xp.skills.splice(purchaseIndex, 1);
       }
     }
@@ -1772,8 +1812,8 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       }
     }});
 
-    await xpLogEarn(newActor, totalXp, totalXp, totalXp, "Initial State");
-    await xpLogSpend(newActor, "Character Creation Changes", totalXp - availableXp, availableXp, totalXp);
+    await xpLogEarn(newActor, totalXp, totalXp, totalXp, game.i18n.localize("SWFFG.CharacterCreator.InitialXP"));
+    await xpLogSpend(newActor, game.i18n.localize("SWFFG.CharacterCreator.SpentXP"), totalXp - availableXp, availableXp, totalXp);
 
     newActor.sheet.render(true);
   }

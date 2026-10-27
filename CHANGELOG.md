@@ -1,3 +1,12 @@
+# 2.0.4.1404 — Gameplay validation (pre-release)
+
+- Calculate weapon characteristic damage after actor effects, including species bonuses, without accumulating repeated bonuses.
+- Render claimed initiative slots using V14 Active Effects; match combatants by token and prevent duplicate slot claims in one round.
+- Serialize medical item use, await document updates, and enforce the daily use limit without consuming ineffective extra items.
+- Restore world careers in the character creator, reset stale starting bonuses when changing rules, refund only matching purchases, and clean up dropdowns/socket listeners.
+- Translate wizard tabs, characteristics, shopping filters, tables, XP messages, and combat slots; fix Cyrillic overflow and V2 header icons.
+- Validate 35 automated tests, 24 live regression assertions, and 39 gameplay assertions on Foundry 14.368. Character creation, purchases, armor, attacks, initiative, damage, minions, healing, and rest were exercised.
+
 # 2.0.4.1403 — New species saving (pre-release)
 
 - Create missing inherent changes when first saving a new species; avoid an exception while closing its sheet.

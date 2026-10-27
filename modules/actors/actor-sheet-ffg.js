@@ -2,6 +2,7 @@
  * Extend the basic ActorSheet with some very simple modifications
  * @extends {ActorSheet}
  */
+import {useMedicalItem} from "../helpers/medical.js";
 import PopoutEditor from "../popout-editor.js";
 import DiceHelpers from "../helpers/dice-helpers.js";
 import ActorOptions from "./actor-ffg-options.js";
@@ -1181,35 +1182,13 @@ export class ActorSheetFFG extends foundry.appv1.sheets.ActorSheet {
         // Get current item's quantity
         const li = $(event.currentTarget).parents(".item");
         const itemId = li.data("itemId");
-        const item = this.actor.items.get(itemId);
-        const consumeHealingItemSetting = game.settings.get("starwarsffg", "consumeHealingItem");
-        // Check that current item is not empty of uses/quantity
-        if (item && (item.system.quantity.value > 0 || !consumeHealingItemSetting)) {
-          // Check that already used number of *stimpacks* is not maxed out
-          const prevUses = this.actor.system?.stats?.medical?.uses ?? 0;
-
-          if(consumeHealingItemSetting) {
-            const count = item.system.quantity.value - 1;
-            item.update({["system.quantity.value"]: count});
-          }
-          const newUses = prevUses + 1;
-          const currentWounds = this.actor.system?.stats?.wounds?.value ?? 0;
-          let woundsHealing = 0;
-          if (item.flags.starwarsffg.config.medicalType == 1) { // stimpack
-            woundsHealing = Math.max(5 - prevUses, 0);
-          }
-          else if (item.flags.starwarsffg.config.medicalType == 2) { // emergency droid patch
-            woundsHealing = 3;
-          }
-          const newWounds = Math.max(currentWounds - woundsHealing, 0);
-          this.actor.update({
-            ["system.stats.medical.uses"]: newUses,
-            ["system.stats.wounds.value"]: newWounds,
-          });
+        const result = await useMedicalItem(this.actor, itemId, game.settings.get("starwarsffg", "consumeHealingItem"));
+        if (result.reason === "limit") ui.notifications.info(game.i18n.localize("SWFFG.MedicalDailyLimit"));
+        if (result.used) {
           const itemName = this.actor?.flags?.starwarsffg?.config?.medicalItemName || game.i18n.localize("SWFFG.DefaultMedicalItemName");
-          CONFIG.ChatMessage.documentClass.create({
-            speaker: { alias: this.actor.name },
-            content: `<i>${game.i18n.localize("SWFFG.MedicalItemUse")} ${itemName} #${newUses}</i>`,
+          await CONFIG.ChatMessage.documentClass.create({
+            speaker: {actor: this.actor.id, alias: this.actor.name},
+            content: `<i>${game.i18n.localize("SWFFG.MedicalItemUse")} ${itemName} #${result.uses}</i>`,
           });
         }
       });
