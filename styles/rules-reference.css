@@ -1,0 +1,38 @@
+#starwarsffg-rules-reference {
+  box-sizing: border-box;
+  width: min(47rem, calc(100vw - 2rem));
+  height: min(43rem, calc(100dvh - 2rem));
+  margin: auto;
+  padding: 1rem;
+  border: 1px solid #757c82;
+  border-radius: .5rem;
+  color: #eeebe5;
+  background: #24282c;
+  color-scheme: dark;
+}
+
+#starwarsffg-rules-reference[open] { display: flex; flex-direction: column; gap: .8rem; }
+#starwarsffg-rules-reference::backdrop { background: rgb(0 0 0 / 45%); }
+#starwarsffg-rules-reference header { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+#starwarsffg-rules-reference :is(h2, h3) { margin: 0; color: inherit; line-height: 1.25; text-shadow: none; }
+#starwarsffg-rules-reference h2 { font-size: 1.4rem; }
+#starwarsffg-rules-reference h3 { font-size: 1.15rem; }
+#starwarsffg-rules-reference nav { display: flex; flex-wrap: wrap; gap: .35rem; }
+#starwarsffg-rules-reference button {
+  width: auto;
+  height: auto;
+  padding: .3rem .55rem;
+  border: 1px solid #77818b;
+  border-radius: .3rem;
+  color: #f5f3f0;
+  background: #333b43;
+  cursor: pointer;
+}
+#starwarsffg-rules-reference button[aria-pressed="true"] { color: #202327; background: #e4bd83; }
+#starwarsffg-rules-reference :focus-visible { outline: 2px solid #f6cf86; outline-offset: 1px; }
+#starwarsffg-rules-reference article { min-height: 0; overflow: auto; padding: .3rem .6rem .6rem .2rem; }
+#starwarsffg-rules-reference section + section { border-top: 1px solid #626b74; padding-top: .8rem; }
+#starwarsffg-rules-reference small { color: #c2cad0; }
+#starwarsffg-rules-reference small a { color: #a9daff; text-decoration: underline; }
+#starwarsffg-rules-reference dt { font-weight: bold; margin-top: .65rem; }
+#starwarsffg-rules-reference dd { margin: .15rem 0 .6rem; line-height: 1.4; }

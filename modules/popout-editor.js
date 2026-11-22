@@ -70,6 +70,37 @@ export default class PopoutEditor extends FormApplication {
       }
     }
 
+    return this.replaceDiceSymbols(html);
+  }
+
+  /**
+   * ChatMessage has already enriched and permission-filtered the content.
+   * Other render hooks may have bound listeners to nodes in the same card.
+   */
+  static renderChatDiceImages(content) {
+    const doc = content.ownerDocument;
+    const walker = doc.createTreeWalker(content, NodeFilter.SHOW_TEXT);
+    const candidates = [];
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      if (!/\[[\w/]+\]|:\w+(?:-\d)?:/.test(node.data)) continue;
+      if (node.parentElement.closest("code, pre, script, style, textarea, .dietype, .content-link, .inline-roll, .rollSkillDirect")) continue;
+      candidates.push(node);
+    }
+    for (const node of candidates) {
+      // A chat message can contain literal markup. Keep it text, including
+      // quotes if a roll tag interpolates its skill name into an attribute.
+      const escaped = node.data.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+      const rendered = this.replaceDiceSymbols(this.replaceRollTags(escaped));
+      if (rendered === escaped) continue;
+      const template = doc.createElement("template");
+      template.innerHTML = rendered;
+      node.replaceWith(template.content);
+    }
+  }
+
+  static replaceDiceSymbols(html) {
     const dicetheme = game.settings.get("starwarsffg", "dicetheme");
 
     const replaceValues = [
@@ -241,7 +272,7 @@ export default class PopoutEditor extends FormApplication {
       html = html.toString().replace(item.pattern, `<span class='dietype ${item.class} ${item.type}'>${item.character}</span>`);
     });
 
-    const regex = /:([\w]*)-(\d):/gim;
+    const regex = /:(average|hard|daunting|formidable)-(\d):/gim;
     let m;
     while ((m = regex.exec(html)) !== null) {
       // This is necessary to avoid infinite loops with zero-width matches
@@ -339,6 +370,7 @@ export default class PopoutEditor extends FormApplication {
       const args = content.split(",").map(function (arg) {
         return arg.trim();
       });
+      if (!args[0] || !/^[0-5]$/.test(args[1] ?? "")) return `[ROLL]${content}[/ROLL]`;
       const di = "[DI]";
       let difficulty = "";
       switch (args[1]) {

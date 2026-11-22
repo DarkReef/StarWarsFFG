@@ -1085,10 +1085,10 @@ Hooks.on("renderCompendiumDirectory", (app, html, data) => {
 });
 
 // Update chat messages with dice images and native, single-render listeners.
-registerChatMessageRender(async (message, html) => {
+registerChatMessageRender((message, html) => {
   const content = html.querySelector(".message-content");
-  if (!content) return;
-  content.innerHTML = await PopoutEditor.renderDiceImages(content.innerHTML);
+  if (!content || message.isContentVisible === false) return;
+  PopoutEditor.renderChatDiceImages(content);
 
   bindChatAction(html, "click", ".ffg-pool-to-player", () => {
     const poolData = message.flags.starwarsffg;

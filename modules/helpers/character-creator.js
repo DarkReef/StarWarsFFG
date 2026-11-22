@@ -702,7 +702,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       if (!pack) {
         continue;
       }
-      const items = await pack.getDocuments();
+      const items = await pack.getDocuments({ type__in: ["weapon", "armour", "gear", "itemattachment", "itemmodifier", "shipweapon", "shipattachment", "homesteadupgrade"] });
       for (const item of items) {
         if (item.system?.rarity?.value > maxRarity || (!allowRestricted && item.system?.rarity?.isrestricted)) {
           // do not include items disallowed by the GM
@@ -731,7 +731,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       if (!pack) {
         continue;
       }
-      const items = await pack.getDocuments();
+      const items = await pack.getDocuments({ type: "background" });
       for (const item of items) {
         item.pill = await foundry.applications.ux.TextEditor.enrichHTML(item?.link);
         if (item.system.type === "culture") {
@@ -775,7 +775,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       if (!pack) {
         continue;
       }
-      const items = await pack.getDocuments();
+      const items = await pack.getDocuments({ type: "obligation" });
       for (const item of items) {
         item.pill = await foundry.applications.ux.TextEditor.enrichHTML(item?.link);
         obligations.push(item);
@@ -803,7 +803,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       if (!pack) {
         continue;
       }
-      const items = await pack.getDocuments();
+      const items = await pack.getDocuments({ type: "species" });
       for (const item of items) {
         item.pill = await foundry.applications.ux.TextEditor.enrichHTML(item?.link);
         species.push(item);
@@ -831,7 +831,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       if (!pack) {
         continue;
       }
-      const items = await pack.getDocuments();
+      const items = await pack.getDocuments({ type: "career" });
       for (const item of items) {
         item.pill = await foundry.applications.ux.TextEditor.enrichHTML(item?.link);
         careers.push(item);
@@ -859,7 +859,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
       if (!pack) {
         continue;
       }
-      const items = await pack.getDocuments();
+      const items = await pack.getDocuments({ type: "motivation" });
       for (const item of items) {
         item.pill = await foundry.applications.ux.TextEditor.enrichHTML(item?.link);
         motivations.push(item);
@@ -1375,7 +1375,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         if (!pack) {
           continue;
         }
-        const items = await pack.getDocuments();
+        const items = await pack.getDocuments({ type: "specialization" });
         for (const item of items) {
           if (!inCareerNames.includes(item.name) && item.system.universal) {
             universal.push({
@@ -1431,7 +1431,7 @@ export class CharacterCreator extends HandlebarsApplicationMixin(ApplicationV2) 
         if (!pack) {
           continue;
         }
-        const items = await pack.getDocuments();
+        const items = await pack.getDocuments({ type: "forcepower" });
         for (const item of items) {
           selectableItems.push({
             name: item.name,

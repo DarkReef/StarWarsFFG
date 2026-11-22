@@ -2261,7 +2261,7 @@ export class ActorSheetFFG extends foundry.appv1.sheets.ActorSheet {
         if (!pack) {
           continue;
         }
-        const items = await pack.getDocuments();
+        const items = await pack.getDocuments({ type: "specialization" });
         for (const item of items) {
           if (!inCareerNames.includes(item.name) && item.system.universal) {
             universal.push({
@@ -2307,7 +2307,7 @@ export class ActorSheetFFG extends foundry.appv1.sheets.ActorSheet {
       for (const itemId of Object.keys(rawSelectableItems)) {
         const item = rawSelectableItems[itemId];
         let retrievedItem = game.items.get(item.id);
-        if (retrievedItem) {
+        if (retrievedItem?.type === "signatureability") {
           selectableItems.push({
             name: retrievedItem.name,
             id: retrievedItem.id,
@@ -2322,7 +2322,7 @@ export class ActorSheetFFG extends foundry.appv1.sheets.ActorSheet {
         if (!pack) {
           continue;
         }
-        const items = await pack.getDocuments();
+        const items = await pack.getDocuments({ type: "signatureability" });
         for (const item of items) {
           if (sigAbilityNames.includes(item.name)) {
             selectableItems.push({
@@ -2398,7 +2398,7 @@ export class ActorSheetFFG extends foundry.appv1.sheets.ActorSheet {
         if (!pack) {
           continue;
         }
-        const items = await pack.getDocuments();
+        const items = await pack.getDocuments({ type: "forcepower" });
         for (const item of items) {
           selectableItems.push({
             name: item.name,
@@ -2440,7 +2440,7 @@ export class ActorSheetFFG extends foundry.appv1.sheets.ActorSheet {
           continue;
         }
         let packItems = [];
-        const items = await pack.getDocuments();
+        const items = await pack.getDocuments({ type: "talent" });
         for (const item of items) {
           const purchasedItem = purchasedItems.find((pItem) => pItem.name === item.name)
           if(!purchasedItem || purchasedItem.isRanked) {
