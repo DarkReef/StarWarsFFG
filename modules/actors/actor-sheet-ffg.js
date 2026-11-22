@@ -75,6 +75,15 @@ export class ActorSheetFFG extends foundry.appv1.sheets.ActorSheet {
   }
 
   /** @override */
+  _disableFields(form) {
+    super._disableFields(form);
+    // Observers can navigate between panels while the sheet's editing controls stay disabled.
+    for (const tab of form.querySelectorAll(":scope.ffg-player-character > .sheet-tabs > button[type=button][data-tab]")) {
+      tab.disabled = false;
+    }
+  }
+
+  /** @override */
   async _onDropItem(event, data) {
     if(!this.actor.verifyEditModeIsNotEnabled()) return false;
 

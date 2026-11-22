@@ -45,12 +45,45 @@ export async function verifyCharacterSheetLayout({actorId, auditOnly = false} = 
       document.body.append(host);
       try {
         sheet._activateCoreListeners($(form));
-        const tabs = [...form.querySelectorAll(".sheet-tabs [data-tab]")];
-        const panels = [...form.querySelectorAll(".sheet-body > .tab")];
-        function selectTab(id) {
-          for (const tab of [...tabs,...panels]) tab.classList.toggle("active",tab.dataset.tab===id);
-        }
         const prefix = version + "/" + role;
+        const navs = [...form.querySelectorAll("nav.sheet-tabs")];
+        check(navs.length === 1,prefix+"/single-tab-bar");
+        const tabs = [...navs[0].querySelectorAll("[data-tab]")];
+        const panels = [...form.querySelectorAll(".sheet-body > .tab")];
+        const ids = tabs.map(tab => tab.dataset.tab);
+        check(new Set(ids).size === ids.length,prefix+"/unique-tab-ids");
+        for (const tab of tabs) {
+          const id = tab.dataset.tab;
+          const icons = tab.querySelectorAll("i,svg,img");
+          const name = tab.getAttribute("aria-label") || tab.textContent.trim();
+          check(!!name,prefix+"/tab-name/"+id);
+          check(icons.length === (version.endsWith("V2") ? 1 : 0),prefix+"/single-tab-icon/"+id);
+          if (!tab.classList.contains("hidden-content")) {
+            check(getComputedStyle(tab).textShadow === "none" &&
+              [...icons].every(icon => getComputedStyle(icon).textShadow === "none"), prefix+"/single-glyph/"+id);
+          }
+          check(!tab.matches(":disabled") && tab.tabIndex >= 0,prefix+"/interactive-tab/"+id);
+        }
+        // Catch escaping links inside this fixture before Foundry's global link
+        // handler opens a real browser tab during a regression run.
+        host.addEventListener("click", event => {
+          if (!event.target.closest(".sheet-tabs a[href]")) return;
+          failures.push(prefix+"/opens-browser/"+event.target.closest("[data-tab]").dataset.tab);
+          event.preventDefault();
+          event.stopPropagation();
+        });
+        function selectTab(id, {icon = false} = {}) {
+          const tab = tabs.find(entry => entry.dataset.tab === id);
+          if (!tab) return check(false,prefix+"/missing-tab/"+id);
+          const target = icon ? tab.querySelector("i,svg,img") : tab;
+          if (!target) return check(false,prefix+"/missing-tab-target/"+id);
+          target.dispatchEvent(new MouseEvent("click", {bubbles: true, cancelable: true}));
+          const activeTabs = tabs.filter(entry => entry.classList.contains("active"));
+          const activePanels = panels.filter(panel => panel.classList.contains("active"));
+          check(activeTabs.length === 1 && activeTabs[0] === tab,prefix+"/active-tab/"+id);
+          check(activePanels.length === 1 && activePanels[0].dataset.tab === id,prefix+"/active-panel/"+id);
+          check(sheet._tabs[0].active === id,prefix+"/foundry-tab/"+id);
+        }
         check(tabs.some(tab => tab.dataset.tab === "items") && tabs.some(tab => tab.dataset.tab === "characteristics"), prefix+"/tabs");
         let fieldCount = 0;
         for (const path of ["stats.wounds.value","stats.wounds.max","stats.strain.value","stats.strain.max",
@@ -67,10 +100,11 @@ export async function verifyCharacterSheetLayout({actorId, auditOnly = false} = 
         }
         const uses = actor.system.stats.medical?.uses ?? 0;
         check(form.querySelector(".medical")?.parentElement.textContent.includes(uses + "/5"),prefix+"/medical-uses");
-        selectTab("items");
+        selectTab("items", {icon: version.endsWith("V2")});
         const inventory = form.querySelector('.tab[data-tab="items"]');
         const items = actor.items.filter(item => ["weapon","armour","gear"].includes(item.type));
         for (const item of items) check(inventory?.querySelector('[data-item-id="'+item.id+'"]'), prefix+"/equipment/"+item.name);
+        for (const tab of tabs.filter(tab => !tab.classList.contains("hidden-content"))) selectTab(tab.dataset.tab);
         selectTab("characteristics");
         const rows = [...form.querySelectorAll(".skill[data-ability]")];
         check(rows.length > 0,prefix+"/skills");
