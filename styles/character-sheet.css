@@ -1,0 +1,152 @@
+/* Both player-character sheets share the same form. Size it against the window. */
+.starwarsffg.sheet.actor .ffg-player-character {
+  --ffg-pc-accent: #652421;
+  container-type: inline-size;
+  display: flex;
+  flex-flow: column nowrap;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character > .sheet-header {
+  flex: none;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character .header-fields .header-description-block {
+  min-height: 0;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character .character-details-table {
+  margin-block: 0.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.25;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character .character-details-table td {
+  padding: 0.18rem 0.32rem;
+  vertical-align: middle;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character > .sheet-tabs {
+  position: static;
+  display: grid;
+  flex: none;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  align-items: stretch;
+  gap: 3px;
+  width: auto;
+  height: auto;
+  margin: 4px 2px;
+  padding: 3px 0;
+  border-block: 1px solid #968b7d;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character > .sheet-tabs .item:not(.hidden-content) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  min-height: 30px;
+  min-width: 0;
+  margin: 0;
+  padding: 3px 6px;
+  border-radius: 3px;
+  clip-path: none;
+  background: #e4dfd6;
+  color: #332a27;
+  line-height: 1.15;
+  text-align: center;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character > .sheet-tabs .item.active {
+  background: var(--ffg-pc-accent);
+  color: #fff;
+  font-weight: bold;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character > .sheet-body {
+  flex: 1 1 0;
+  height: auto;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character > .sheet-body > .tab.characteristics.active {
+  display: block;
+  flex: none;
+  height: auto;
+  overflow: visible;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character .sheet-body .skillsTablesGrid {
+  float: none;
+  height: auto;
+  overflow: visible;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character .skill .roll-button {
+  width: calc(100% - 4px);
+  min-width: 0;
+  min-height: 24px;
+  height: auto;
+  margin: 2px;
+  padding: 1px 2px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: transparent;
+  color: inherit;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character .skill .roll-button:empty::before {
+  content: "⚄";
+  font: 16px/1 sans-serif;
+}
+
+.starwarsffg.sheet.actor .ffg-player-character .skill .roll-button:enabled:hover {
+  border-color: var(--ffg-pc-accent);
+}
+
+.starwarsffg.sheet.actor .ffg-player-character :is(.sheet-tabs .item, .roll-button):focus-visible {
+  outline: 2px solid var(--ffg-pc-accent);
+  outline-offset: 1px;
+}
+
+@container (max-width: 620px) {
+  .starwarsffg.sheet.actor .ffg-player-character .header-fields .profile-block {
+    flex: 0 0 76px;
+    max-width: 76px;
+    height: auto;
+  }
+
+  .starwarsffg.sheet.actor .ffg-player-character .header-fields .profile-img {
+    width: 76px;
+    height: 80px;
+    max-width: 100%;
+  }
+
+  .ffg-player-character .skillsGrid .skillTypeGrid.skillColumnGrid {
+    flex: 0 0 100%;
+    width: 100%;
+  }
+}
+
+@container (max-width: 500px) {
+  .ffg-player-character .characteristics .grid-6col {
+    column-gap: 2px;
+  }
+
+  .starwarsffg.sheet.actor .ffg-player-character .characteristic-item {
+    min-width: 0;
+    margin-inline: 0;
+  }
+
+  .starwarsffg.sheet.actor .ffg-player-character .characteristic-item .characteristic-label {
+    overflow-wrap: anywhere;
+  }
+}

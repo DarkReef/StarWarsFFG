@@ -2,7 +2,7 @@
   "id": "starwarsffg",
   "title": "Star Wars FFG — V14 (RU)",
   "description": "A system for playing Star Wars FFG games.",
-  "version": "2.0.4.1406",
+  "version": "2.0.4.1407",
   "compatibility": {
     "minimum": "14",
     "verified": "14.368",
@@ -37,7 +37,8 @@
     "lib/datatables/datatables.min.css",
     "styles/russian.css",
     "styles/rules-reference.css",
-    "styles/result-icons.css"
+    "styles/result-icons.css",
+    "styles/character-sheet.css"
   ],
   "scripts": [
     "lib/jszip/jszip.min.js",
@@ -129,6 +130,6 @@
   "secondaryTokenAttribute": "strain",
   "url": "https://github.com/DarkReef/StarWarsFFG",
   "manifest": "https://raw.githubusercontent.com/DarkReef/StarWarsFFG/v14-ru/system.json",
-  "download": "https://github.com/DarkReef/StarWarsFFG/archive/refs/heads/release-2.0.4.1406.zip",
+  "download": "https://github.com/DarkReef/StarWarsFFG/archive/refs/heads/release-2.0.4.1407.zip",
   "license": "LICENSE.txt"
 }

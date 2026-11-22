@@ -38,7 +38,9 @@
           <div class="pure-u-3-24 hover"><input class="careerskill-toggle" type="checkbox" name="data.skills.{{skill.name}}.careerskill" data-dtype="Boolean" {{checked skill.careerskill}} /></div>
           {{/if}}
           <div class="pure-u-3-24"><input class="careerskill-rank" name="data.skills.{{skill.name}}.rank" value="{{skill.rank}}" type="text" min="0" data-dtype="Number" placeholder="0" {{#if ../../disabled }}disabled{{/if }}/></div>
-          <div class="pure-u-6-24"><div class="roll-button dice-pool"></div></div>
+          <div class="pure-u-6-24">{{#if ../../playerCharacter}}
+            <button type="button" class="roll-button dice-pool" aria-label="{{localize 'SWFFG.SkillsRoll'}}: {{skill.label}}" {{#unless ../../editable}}disabled{{/unless}}></button>
+          {{else}}<div class="roll-button dice-pool"></div>{{/if}}</div>
         </div>
       </div>
       {{/if}} {{/each}}

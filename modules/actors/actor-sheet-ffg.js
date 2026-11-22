@@ -438,11 +438,12 @@ export class ActorSheetFFG extends foundry.appv1.sheets.ActorSheet {
     });
     html.find(".popout-editor .popout-editor-button").on("click", this._onPopoutEditor.bind(this));
 
-    // Setup dice pool image and hide filtered skills
-    html.find(".skill").each(async (_, elem) => {
-      await DiceHelpers.addSkillDicePool(await this.getData({}), elem);
-      const filters = this._filters.skills;
-    });
+    const skillRows = html.find(".skill").get();
+    if (skillRows.length) {
+      this.getData({})
+        .then(data => Promise.all(skillRows.map(row => DiceHelpers.addSkillDicePool(data, row))))
+        .catch(error => Hooks.onError("ActorSheetFFG#activateListeners", error, {log: "error"}));
+    }
 
     // Everything below here is only needed if the sheet is editable
     if (!this.isEditable) return;
