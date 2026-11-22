@@ -14,6 +14,23 @@ export default class RollBuilderFFG extends FormApplication {
     this.description = rollDescription;
   }
 
+  /** Edit a prepared pool without sending it to chat. Closing the form cancels. */
+  static promptPool({ actor, pool, skillName }) {
+    const title = `${actor.name} · ${game.i18n.localize(skillName)}`;
+    const app = new this({ actor, document: actor, token: actor.token }, pool, title, skillName);
+    app.options.id = `ffg-request-pool-${foundry.utils.randomID()}`;
+    return new Promise((resolve, reject) => {
+      app._resolvePool = resolve;
+      app._render(true).catch(reject);
+    });
+  }
+
+  async close(options) {
+    this._resolvePool?.(null);
+    this._resolvePool = null;
+    return super.close(options);
+  }
+
   /** @override */
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
@@ -119,6 +136,16 @@ export default class RollBuilderFFG extends FormApplication {
 
     this._initializeInputs(html);
     this._activateInputs(html);
+
+    if (this._resolvePool) {
+      html.find(".pool-roll-options").closest("details").remove();
+      html.find(".btn").on("click", event => {
+        event.preventDefault();
+        this._updateObject();
+        this.close();
+      });
+      return;
+    }
 
     html.find(".btn").click(async (event) => {
       // if sound was not passed search for sound dropdown value
@@ -362,7 +389,10 @@ export default class RollBuilderFFG extends FormApplication {
     });
   }
 
-  _updateObject() {}
+  _updateObject() {
+    this._resolvePool?.(this.dicePool);
+    this._resolvePool = null;
+  }
 
   /**
    * Add the results of the dice simulation
@@ -399,7 +429,7 @@ export default class RollBuilderFFG extends FormApplication {
         newClass = "likely";
       }
 
-      $("#success_chance").text(
+      this.element.find("#success_chance").text(
         `${(simResults.successProbability * 100).toLocaleString(undefined, {maximumFractionDigits: 0})}%`
       ).removeClass("likely unlikely").addClass(newClass);
     } catch (e) {

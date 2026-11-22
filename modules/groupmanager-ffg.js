@@ -1,3 +1,4 @@
+import { resultIconHTML } from "./dice/result-icons.mjs";
 import {xpLogEarn} from "./helpers/actor-helpers.js";
 import ActorHelpers from "./helpers/actor-helpers.js";
 import { messageModeOptions } from "./compatibility/chat.js";
@@ -134,7 +135,8 @@ export class GroupManager extends FormApplication {
       dark: game.settings.get("starwarsffg", "destiny-pool-dark"),
     };
 
-    return { dPool, players, initiative, isGM, pcListMode, characters, obligations, duties, theme, labels };
+    const destinyIcons = {light: resultIconHTML("light"), dark: resultIconHTML("dark")};
+    return { dPool, players, initiative, isGM, pcListMode, characters, obligations, duties, theme, labels, destinyIcons };
   }
 
   /* -------------------------------------------- */

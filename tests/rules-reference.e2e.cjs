@@ -34,8 +34,11 @@ async function openWorld(t, options = {}) {
       <html lang="ru"><meta charset="utf-8"><link rel="icon" href="data:,">
       <script type="importmap">{"imports":{"@client/":"/client/"}}</script>
       <main><textarea aria-label="Чат"></textarea></main></html>`});
-    const source = name.startsWith("client/") ? path.join(app, name) : path.join(root, name);
-    await route.fulfill({contentType: name.endsWith(".css") ? "text/css" : "text/javascript", body: await fs.readFile(source)});
+    const source = name.startsWith("client/")
+      ? path.join(app, name)
+      : path.join(root, name.replace(/^systems\/starwarsffg\//, ""));
+    const contentType = ({".css": "text/css", ".svg": "image/svg+xml", ".webp": "image/webp", ".png": "image/png"})[path.extname(name)] || "text/javascript";
+    await route.fulfill({contentType, body: await fs.readFile(source)});
   });
   await page.goto("http://world.test/");
   assert.ok(manifest.esmodules.includes(referenceModule), "Foundry must load the F1 reference from system.json");
@@ -47,7 +50,10 @@ async function openWorld(t, options = {}) {
     window.Hooks = {once: (event, callback) => hooks.set(event, callback)};
     window.CONST = { KEYBINDING_PRECEDENCE: {PRIORITY: 0, NORMAL: 1, DEFERRED: 2} };
     window.CONFIG = {debug: {keybindings: false}};
-    window.foundry = {applications: {detached: {}}, utils: {getType: el => el instanceof HTMLElement ? "HTMLElement" : "unknown"}};
+    window.foundry = {applications: {detached: {}}, utils: {
+      getType: el => el instanceof HTMLElement ? "HTMLElement" : "unknown",
+      getRoute: path => "/" + path
+    }};
     const settings = options.remap ? {"starwarsffg.rulesReference": [{key: "F2", modifiers: []}]} : {};
     window.game = {user: {isGM: !!options.gm}, modules: new Map(),
       settings: {get: (_namespace, key) => key === "keybindings" ? settings : false}};
@@ -138,4 +144,14 @@ test("Physical page numbers remain readable with an unconfigured compendium", as
   await page.keyboard.press("F1");
   await page.getByText("«Сила и судьба», с. 224–225", {exact: true}).waitFor();
   assert.equal(await page.getByRole("link").count(), 0);
+});
+
+test("Spending costs and opposite results pair visible Russian labels with decorative icons", async t => {
+  const page = await openWorld(t);
+  await page.keyboard.press("F1");
+  const report = await page.evaluate(async () => {
+    const {verifyReferenceSymbols} = await import("/tests/rules-reference-symbols.e2e.mjs");
+    return verifyReferenceSymbols();
+  });
+  assert.deepEqual(report, {labels: 12, icons: 16});
 });

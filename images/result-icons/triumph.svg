@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <title>Triumph</title>
+  <circle cx="12" cy="12" r="8.3" fill="none" stroke="#faf7ed" stroke-width="4"/>
+  <circle cx="12" cy="12" r="8.3" fill="none" stroke="#5b431a" stroke-width="2.35"/>
+  <path d="M12 1l1.2 9.4 4-2.6-2.6 4.3 5.7 1.1-6 1.3-1 8.4-2-7.6-4.1 2.4 2.5-4.1-5.8-2.1 6.4-.4Z" fill="#65491a" stroke="#faf7ed" stroke-width="1.1" stroke-linejoin="round" paint-order="stroke fill"/>
+</svg>

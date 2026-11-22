@@ -1,3 +1,5 @@
+import { resultIconHTML, resultIconLabel } from "./dice/result-icons.mjs";
+import { resultTokens } from "./helpers/journal.js";
 import {migrateDataToSystem} from "./helpers/migration.js";
 
 /**
@@ -58,11 +60,12 @@ export default class PopoutEditor extends FormApplication {
    * @param  {String} string
    */
   static async renderDiceImages(str, actorData) {
-    let html = str || "";
-
-    html = this.replaceRollTags(html, actorData);
+    const content = document.createElement("div");
+    content.innerHTML = str || "";
+    this.renderChatDiceImages(content, actorData);
+    const html = content.innerHTML;
     try {
-      html = await foundry.applications.ux.TextEditor.implementation.enrichHTML(html, { secrets: true, documents: true, async: false });
+      return await foundry.applications.ux.TextEditor.implementation.enrichHTML(html, { secrets: true, documents: true, async: false });
     } catch (err) {
       // ignore the message below, it means that we already created an entity link (this could be part of an editor text)
       if (err.message !== "An Entity subclass must configure the EntityCollection it belongs to.") {
@@ -70,21 +73,21 @@ export default class PopoutEditor extends FormApplication {
       }
     }
 
-    return this.replaceDiceSymbols(html);
+    return html;
   }
 
   /**
    * ChatMessage has already enriched and permission-filtered the content.
    * Other render hooks may have bound listeners to nodes in the same card.
    */
-  static renderChatDiceImages(content) {
+  static renderChatDiceImages(content, actorData) {
     const doc = content.ownerDocument;
     const walker = doc.createTreeWalker(content, NodeFilter.SHOW_TEXT);
     const candidates = [];
     while (walker.nextNode()) {
       const node = walker.currentNode;
       if (!/\[[\w/]+\]|:\w+(?:-\d)?:/.test(node.data)) continue;
-      if (node.parentElement.closest("code, pre, script, style, textarea, .dietype, .content-link, .inline-roll, .rollSkillDirect")) continue;
+      if (node.parentElement.closest("code, pre, script, style, textarea, [contenteditable=true], .dietype, [data-ffg-symbol], .content-link, .inline-roll, .rollSkillDirect")) continue;
       candidates.push(node);
     }
     for (const node of candidates) {
@@ -92,7 +95,7 @@ export default class PopoutEditor extends FormApplication {
       // quotes if a roll tag interpolates its skill name into an attribute.
       const escaped = node.data.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;").replaceAll("'", "&#39;");
-      const rendered = this.replaceDiceSymbols(this.replaceRollTags(escaped));
+      const rendered = this.replaceDiceSymbols(this.replaceRollTags(escaped, actorData));
       if (rendered === escaped) continue;
       const template = doc.createElement("template");
       template.innerHTML = rendered;
@@ -109,12 +112,6 @@ export default class PopoutEditor extends FormApplication {
         character: "d",
         class: "starwars",
         pattern: /:(ability):|\[(AB)(ILITY)?\]/gim,
-      },
-      {
-        type: "advantage",
-        character: "a",
-        class: dicetheme,
-        pattern: /:(advantage):|\[(AD)(VANTAGE)?\]/gim,
       },
       {
         type: "difficulty",
@@ -135,22 +132,10 @@ export default class PopoutEditor extends FormApplication {
         pattern: /:(challenge):|\[(CH)(ALLENGE)?\]/gim,
       },
       {
-        type: "dark",
-        character: "z",
-        class: "starwars",
-        pattern: /:(darkside):|\[(DA)(RK)?\]/gim,
-      },
-      {
         type: "difficulty",
         character: "dddd",
         class: "starwars",
         pattern: /:(daunting):/gim,
-      },
-      {
-        type: "despair",
-        character: dicetheme === "starwars" ? "y" : "d",
-        class: dicetheme,
-        pattern: /:(despair):|\[(DE)(SPAIR)?\]/gim,
       },
       {
         type: "difficulty",
@@ -171,22 +156,10 @@ export default class PopoutEditor extends FormApplication {
         pattern: /:(easy-1):/gim,
       },
       {
-        type: "forcepoint",
-        character: "Y",
-        class: "starwars",
-        pattern: /:(forcepip):|\[(FP|FORCEPOINT)\]/gim,
-      },
-      {
         type: "difficulty",
         character: "ddddd",
         class: "starwars",
         pattern: /:(formidable):/gim,
-      },
-      {
-        type: "failure",
-        character: "f",
-        class: dicetheme,
-        pattern: /:(failure):|\[(FA)(ILURE)?\]/gim,
       },
       {
         type: "force",
@@ -199,12 +172,6 @@ export default class PopoutEditor extends FormApplication {
         character: "ddd",
         class: "starwars",
         pattern: /:(hard):/gim,
-      },
-      {
-        type: "light",
-        character: "Z",
-        class: "starwars",
-        pattern: /:(lightside):|\[(LI)(GHT)?\]/gim,
       },
       {
         type: "proficiency",
@@ -231,24 +198,6 @@ export default class PopoutEditor extends FormApplication {
         pattern: /:(setback):|\[(SE)(TBACK)?\]/gim,
       },
       {
-        type: "success",
-        character: "s",
-        class: dicetheme,
-        pattern: /:(success):|\[(SU)(CCESS)?\]/gim,
-      },
-      {
-        type: "threat",
-        character: dicetheme === "starwars" ? "t" : "h",
-        class: dicetheme,
-        pattern: /:(threat):|\[(TH)(REAT)?\]/gim,
-      },
-      {
-        type: "triumph",
-        character: dicetheme === "starwars" ? "x" : "t",
-        class: dicetheme,
-        pattern: /:(triumph):|\[(TR)(IUMPH)?\]/gim,
-      },
-      {
         type: "adddifficulty",
         character: "d",
         class: "starwars",
@@ -268,6 +217,9 @@ export default class PopoutEditor extends FormApplication {
       },
     ];
 
+    for (const [key, pattern] of Object.entries(resultTokens)) {
+      html = html.replace(pattern, () => resultIconHTML(key, {label: resultIconLabel(key)}));
+    }
     replaceValues.forEach((item) => {
       html = html.toString().replace(item.pattern, `<span class='dietype ${item.class} ${item.type}'>${item.character}</span>`);
     });

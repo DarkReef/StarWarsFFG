@@ -1,8 +1,26 @@
+import { createResultIcon, resultIconLabel } from "../dice/result-icons.mjs";
+
+// Keep existing short, long and colon-delimited OggDude input compatible.
+export const resultTokens = {
+  success: /:success:|\[(?:SU|SUCCESS)\]/gi,
+  failure: /:failure:|\[(?:FA|FAILURE)\]/gi,
+  advantage: /:advantage:|\[(?:AD|ADVANTAGE)\]/gi,
+  threat: /:threat:|\[(?:TH|THREAT)\]/gi,
+  triumph: /:triumph:|\[(?:TR|TRIUMPH)\]/gi,
+  despair: /:despair:|\[(?:DE|DESPAIR)\]/gi,
+  light: /:lightside:|\[(?:LI|LS|LIGHT)\]/gi,
+  dark: /:darkside:|\[(?:DA|DS|DARK)\]/gi,
+  forcePoint: /:forcepip:|\[(?:FP|FORCEPOINT)\]/gi,
+};
+
 /**
  * Registers enrichers for the Journal pages - automatically runs the regex and replaces it with the return value of the function
  */
 export function register_dice_enricher() {
   const dicetheme = game.settings.get("starwarsffg", "dicetheme");
+  for (const [key, pattern] of Object.entries(resultTokens)) {
+    CONFIG.TextEditor.enrichers.push({pattern, enricher: () => createResultIcon(key, {label: resultIconLabel(key)})});
+  }
   // ability die
   CONFIG.TextEditor.enrichers.push({
     pattern: /:(ability):|\[(AB)(ILITY)?\]/gim,
@@ -15,18 +33,7 @@ export function register_dice_enricher() {
         return element;
       }
   });
-    // advantage die
-  CONFIG.TextEditor.enrichers.push({
-    pattern: /:(advantage):|\[(AD)(VANTAGE)?\]/gim,
-    enricher: async (match, options) => {
-        let element = document.createElement("span");
-        element.classList.add("dietype");
-        element.classList.add(dicetheme);
-        element.classList.add("advantage");
-        element.append("a");
-        return element;
-      }
-  });
+
   // difficulty die
   CONFIG.TextEditor.enrichers.push({
     pattern: /:(average):/gim,
@@ -63,18 +70,7 @@ export function register_dice_enricher() {
         return element;
       }
   });
-  // dark die
-  CONFIG.TextEditor.enrichers.push({
-    pattern: /:(darkside):|\[(DA)(RK)?\]/gim,
-    enricher: async (match, options) => {
-        let element = document.createElement("span");
-        element.classList.add("dietype");
-        element.classList.add(dicetheme);
-        element.classList.add("dark");
-        element.append("z");
-        return element;
-      }
-  });
+
   // difficulty die
   CONFIG.TextEditor.enrichers.push({
     pattern: /:(daunting):/gim,
@@ -87,18 +83,7 @@ export function register_dice_enricher() {
         return element;
       }
   });
-  // despair die
-  CONFIG.TextEditor.enrichers.push({
-    pattern: /:(despair):|\[(DE)(SPAIR)?\]/gim,
-    enricher: async (match, options) => {
-        let element = document.createElement("span");
-        element.classList.add("dietype");
-        element.classList.add(dicetheme);
-        element.classList.add("despair");
-        element.append(dicetheme === "starwars" ? "y" : "d",);
-        return element;
-      }
-  });
+
   // difficulty die
   CONFIG.TextEditor.enrichers.push({
     pattern: /:(difficulty):|\[(DI)(FFICULTY)?\]/gim,
@@ -135,18 +120,6 @@ export function register_dice_enricher() {
         return element;
       }
   });
-  // forcepoint die
-  CONFIG.TextEditor.enrichers.push({
-    pattern: /:(forcepip):|\[(FP|FORCEPOINT)\]/gim,
-    enricher: async (match, options) => {
-        let element = document.createElement("span");
-        element.classList.add("dietype");
-        element.classList.add(dicetheme);
-        element.classList.add("forcepoint");
-        element.append("Y");
-        return element;
-      }
-  });
   // difficulty die
   CONFIG.TextEditor.enrichers.push({
     pattern: /:(formidable):/gim,
@@ -159,18 +132,7 @@ export function register_dice_enricher() {
         return element;
       }
   });
-  // failure die
-  CONFIG.TextEditor.enrichers.push({
-    pattern: /:(failure):|\[(FA)(ILURE)?\]/gim,
-    enricher: async (match, options) => {
-        let element = document.createElement("span");
-        element.classList.add("dietype");
-        element.classList.add(dicetheme);
-        element.classList.add("failure");
-        element.append("f");
-        return element;
-      }
-  });
+
   // force die
   CONFIG.TextEditor.enrichers.push({
     pattern: /:(force):|\[(FO)(RCE)?\]/gim,
@@ -195,18 +157,7 @@ export function register_dice_enricher() {
         return element;
       }
   });
-  // light die
-  CONFIG.TextEditor.enrichers.push({
-    pattern: /:(lightside):|\[(LI)(GHT)?\]/gim,
-    enricher: async (match, options) => {
-        let element = document.createElement("span");
-        element.classList.add("dietype");
-        element.classList.add(dicetheme);
-        element.classList.add("light");
-        element.append("Z");
-        return element;
-      }
-  });
+
   // proficiency die
   CONFIG.TextEditor.enrichers.push({
     pattern: /:(proficiency):|\[(PR)(OFICIENCY)?\]/gim,
@@ -243,42 +194,9 @@ export function register_dice_enricher() {
         return element;
       }
   });
-  // success die
-  CONFIG.TextEditor.enrichers.push({
-    pattern: /:(success):|\[(SU)(CCESS)?\]/gim,
-    enricher: async (match, options) => {
-        let element = document.createElement("span");
-        element.classList.add("dietype");
-        element.classList.add(dicetheme);
-        element.classList.add("success");
-        element.append("s");
-        return element;
-      }
-  });
-  // threat die
-  CONFIG.TextEditor.enrichers.push({
-    pattern: /:(threat):|\[(TH)(REAT)?\]/gim,
-    enricher: async (match, options) => {
-        let element = document.createElement("span");
-        element.classList.add("dietype");
-        element.classList.add(dicetheme);
-        element.classList.add("threat");
-        element.append(dicetheme === "starwars" ? "t" : "h");
-        return element;
-      }
-  });
-  // triumph die
-  CONFIG.TextEditor.enrichers.push({
-    pattern: /:(triumph):|\[(TR)(IUMPH)?\]/gim,
-    enricher: async (match, options) => {
-        let element = document.createElement("span");
-        element.classList.add("dietype");
-        element.classList.add(dicetheme);
-        element.classList.add("triumph");
-        element.append(dicetheme === "starwars" ? "x" : "t",);
-        return element;
-      }
-  });
+
+
+
   // adddifficulty die
   CONFIG.TextEditor.enrichers.push({
     pattern: /\[(DD|ADDDIFFICULTY)\]/gim,

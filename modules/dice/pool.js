@@ -1,3 +1,7 @@
+import { createResultIcon, resultIconLabel } from "./result-icons.mjs";
+
+const RESULT_KEYS = ["success", "advantage", "triumph", "light", "failure", "threat", "despair", "dark"];
+
 /**
  * Dice pool utility specializing in the FFG special dice
  */
@@ -289,14 +293,13 @@ export class DicePoolFFG {
     this._addIcons(container, CONFIG.FFG.SETBACK_ICON, this.setback, height, width);
     this._addIcons(container, CONFIG.FFG.REMOVESETBACK_ICON, this.remsetback, height, width);
     this._addIcons(container, CONFIG.FFG.FORCE_ICON, this.force, height, width);
-    this._addIcons(container, CONFIG.FFG.SUCCESS_ICON, this.success, height, width);
-    this._addIcons(container, CONFIG.FFG.ADVANTAGE_ICON, this.advantage, height, width);
-    this._addIcons(container, CONFIG.FFG.TRIUMPH_ICON, this.triumph, height, width);
-    this._addIcons(container, CONFIG.FFG.LIGHT_ICON, this.light, height, width);
-    this._addIcons(container, CONFIG.FFG.FAILURE_ICON, this.failure, height, width);
-    this._addIcons(container, CONFIG.FFG.THREAT_ICON, this.threat, height, width);
-    this._addIcons(container, CONFIG.FFG.DESPAIR_ICON, this.despair, height, width);
-    this._addIcons(container, CONFIG.FFG.DARK_ICON, this.dark, height, width);
+    for (const key of RESULT_KEYS) {
+      for (let i = 0; i < this[key]; i++) {
+        const icon = createResultIcon(key, {label: resultIconLabel(key)});
+        icon.style.setProperty("--swffg-result-size", width + "px");
+        container.appendChild(icon);
+      }
+    }
 
     this._addSourceToolTip(container);
 
@@ -304,54 +307,16 @@ export class DicePoolFFG {
   }
 
   renderAdvancedPreview(container) {
-    let advanceContainer = this.renderPreview(container);
-
-    let additionalSymbols = [];
-    ["advantage", "success", "threat", "failure", "light", "dark", "triumph", "despair"].forEach((symbol) => {
-      let diceSymbol = "";
-      switch (symbol) {
-        case "advantage": {
-          diceSymbol = "[AD]";
-          break;
-        }
-        case "success": {
-          diceSymbol = "[SU]";
-          break;
-        }
-        case "threat": {
-          diceSymbol = "[TH]";
-          break;
-        }
-        case "failure": {
-          diceSymbol = "[FA]";
-          break;
-        }
-        case "light": {
-          diceSymbol = "[LI]";
-          break;
-        }
-        case "dark": {
-          diceSymbol = "[DA]";
-          break;
-        }
-        case "triumph": {
-          diceSymbol = "[TR]";
-          break;
-        }
-        case "despair": {
-          diceSymbol = "[DE]";
-          break;
-        }
-      }
-
-      if (this[symbol] !== 0) {
-        additionalSymbols.push(`${this[symbol] < 0 ? "-" : "+"} ${this[symbol]} ${diceSymbol}`);
-      }
-    });
-
-    $(advanceContainer).append(`<div>${additionalSymbols.join(", ")}</div>`);
-
-    return advanceContainer;
+    const preview = this.renderPreview(container);
+    const counts = document.createElement("div");
+    for (const key of RESULT_KEYS) {
+      const value = Number(this[key]);
+      if (!value) continue;
+      if (counts.childNodes.length) counts.append(", ");
+      counts.append((value < 0 ? "−" : "+") + Math.abs(value) + " ", createResultIcon(key, {label: resultIconLabel(key)}));
+    }
+    if (counts.childNodes.length) preview.append(counts);
+    return preview;
   }
 
   _addIcons(container, icon, times, height = 36, width = 36) {

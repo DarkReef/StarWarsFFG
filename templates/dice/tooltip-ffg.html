@@ -13,9 +13,11 @@
           <li class="roll {{this.classes}}">{{{this.result}}}</li>
           {{/each}}
         </ol>
-        <ol class="dice-rolls">
-          <li class="roll">{{{addedResults.success}}}</li>
-        </ol>
+        {{#if this.symbols.length}}
+        <div class="ffg-result-counts">
+          {{#each this.symbols}}<span>{{{icon}}} {{value}}</span> {{/each}}
+        </div>
+        {{/if}}
       </div>
     </section>
     {{/each}}

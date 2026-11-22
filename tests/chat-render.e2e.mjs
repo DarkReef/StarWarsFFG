@@ -15,7 +15,7 @@ export async function verifyChatRender(enrich) {
   const update = enrich(content);
   button.dataset.requestId = "a1";
   await update;
-  const first = content.querySelector(".dietype.success");
+  const first = content.querySelector('[data-ffg-symbol="success"]');
   await enrich(content);
   content.querySelector("button").click();
   const checks = {
@@ -25,7 +25,7 @@ export async function verifyChatRender(enrich) {
     concurrentUpdate: content.querySelector("button").dataset.requestId === "a1",
     attributesUntouched: content.querySelector("button").title === "[SU]",
     icons: Boolean(first && content.querySelector(".dietype.boost")),
-    stableIcon: content.querySelector(".dietype.success") === first,
+    stableIcon: content.querySelector('[data-ffg-symbol="success"]') === first,
     roll: content.querySelector(".rollSkillDirect")?.dataset.skill === "Perception",
     escapedText: content.querySelectorAll("p")[2].textContent.includes("<i>") && !content.querySelector("i"),
     code: content.querySelector("code").textContent === "[DI]"

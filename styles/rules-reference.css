@@ -35,4 +35,11 @@
 #starwarsffg-rules-reference small { color: #c2cad0; }
 #starwarsffg-rules-reference small a { color: #a9daff; text-decoration: underline; }
 #starwarsffg-rules-reference dt { font-weight: bold; margin-top: .65rem; }
+#starwarsffg-rules-reference .reference-result-icon {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  margin-inline-end: .2em;
+  vertical-align: -.18em;
+}
 #starwarsffg-rules-reference dd { margin: .15rem 0 .6rem; line-height: 1.4; }

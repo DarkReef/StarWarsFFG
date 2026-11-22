@@ -1,4 +1,4 @@
-import PopoutEditor from "../popout-editor.js";
+import { resultIconHTML, resultIconLabel } from "./result-icons.mjs";
 import { ForceDie } from "./dietype/ForceDie.js";
 import {migrateDataToSystem} from "../helpers/migration.js";
 import {ItemFFG} from "../items/item-ffg.js";
@@ -107,7 +107,11 @@ export class RollFFG extends foundry.dice.Roll {
 
   async updateSymbols() {
     for (const addedResult of this.addedResults) {
-      addedResult.symbol = await foundry.applications.ux.TextEditor.enrichHTML(addedResult.symbol);
+      // Older messages may store either an OggDude code or already-rendered HTML.
+      const key = addedResult.type?.toLowerCase();
+      addedResult.symbol = Object.hasOwn(this.ffg, key)
+        ? resultIconHTML(key, {label: resultIconLabel(key)})
+        : await foundry.applications.ux.TextEditor.enrichHTML(addedResult.symbol);
     }
   }
 
@@ -232,6 +236,9 @@ export class RollFFG extends foundry.dice.Roll {
         flavor: d.options.flavor,
         isFFG: game.ffg.diceterms.includes(cls),
         notFFG: !game.ffg.diceterms.includes(cls),
+        symbols: game.ffg.diceterms.includes(cls) ? Object.keys(this.ffg)
+          .filter(key => d.ffg?.[key] > 0)
+          .map(key => ({icon: resultIconHTML(key, {label: resultIconLabel(key)}), value: d.ffg[key]})) : [],
         rolls: d.results.map((r) => {
           return {
             result: d.getResultLabel(r),
@@ -240,8 +247,6 @@ export class RollFFG extends foundry.dice.Roll {
         }),
       };
     });
-    parts.addedResults = this.addedResults;
-    parts.flavorText = this.flavorText;
     return foundry.applications.handlebars.renderTemplate(this.constructor.TOOLTIP_TEMPLATE, { parts });
   }
 
@@ -293,6 +298,8 @@ export class RollFFG extends foundry.dice.Roll {
       tooltip: isPrivate ? "" : await this.getTooltip(),
       total: isPrivate ? "?" : Math.round(this.total * 100) / 100,
       ffg: isPrivate ? {} : this.ffg,
+      resultSymbols: isPrivate ? {} : Object.fromEntries(Object.keys(this.ffg)
+        .filter(key => this.ffg[key]).map(key => [key, resultIconHTML(key)])),
       ffgDice: isPrivate
         ? {}
         : this.dice.map((d) => {

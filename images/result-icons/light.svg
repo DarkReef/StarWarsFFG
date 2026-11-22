@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <title>Light side</title>
+  <circle cx="12" cy="12" r="8.2" fill="#faf7ed" stroke="#faf7ed" stroke-width="4"/>
+  <circle cx="12" cy="12" r="8.2" fill="#fffdf3" stroke="#172633" stroke-width="2.4"/>
+</svg>

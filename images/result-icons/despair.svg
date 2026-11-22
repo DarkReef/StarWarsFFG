@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <title>Despair</title>
+  <circle cx="12" cy="12" r="8.7" fill="#faf7ed" stroke="#faf7ed" stroke-width="3.8"/>
+  <circle cx="12" cy="12" r="8.7" fill="none" stroke="#39334c" stroke-width="2.35"/>
+  <path fill-rule="evenodd" d="M1.5 6.4q10.5 4 21 0c-5.5 4-8.4 9.5-10.5 16.4C9.8 16 7 10.5 1.5 6.4Zm5.2 3.4q3.6 3.9 5.3 8.7 1.7-4.8 5.3-8.7a25 25 0 0 1-10.6 0Z" fill="#39334c" stroke="#faf7ed" stroke-width="0.7" stroke-linejoin="round" paint-order="stroke fill"/>
+</svg>

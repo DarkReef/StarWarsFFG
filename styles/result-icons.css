@@ -1,0 +1,25 @@
+/* A result is inline notation. Keep the baseline and row height stable in chat, sheets and journals. */
+.theme-dark {
+  --swffg-result-contrast: invert(1) hue-rotate(180deg);
+}
+.theme-light {
+  --swffg-result-contrast: none;
+}
+img.ffg-result-icon[data-ffg-symbol] {
+  display: inline-block;
+  width: var(--swffg-result-size, clamp(14px, 1.08em, 24px));
+  height: var(--swffg-result-size, clamp(14px, 1.08em, 24px));
+  max-width: none;
+  flex: none;
+  object-fit: contain;
+  vertical-align: -0.15em;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Force pips always retain their printed white, black and split fills. */
+img.ffg-result-icon:not([data-ffg-symbol="light"]):not([data-ffg-symbol="dark"]):not([data-ffg-symbol="forcePoint"]) {
+  filter: var(--swffg-result-contrast, none);
+}

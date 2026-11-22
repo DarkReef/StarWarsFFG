@@ -98,6 +98,9 @@
 
     {{!-- Owned Items Tab --}}
     <div class="tab items" data-group="primary" data-tab="items">
+      <div class="container flex-group-center item-values">
+        {{> "systems/starwarsffg/templates/parts/shared/ffg-block.html" (object blocktype="double" title="SWFFG.DescriptionCredits" type="Number" name="data.stats.credits.value" value=data.stats.credits.value)}}
+      </div>
       {{> "systems/starwarsffg/templates/parts/actor/ffg-weapon-armor-gear.html"}}
     </div>
 
